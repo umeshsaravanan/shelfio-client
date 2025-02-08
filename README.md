@@ -8,3 +8,5 @@
 1. Use lower camel case for variables and functions
 2. Use Upper camel case for files and folders
 3. Seperate external import, CSS and internal import paths by using space in each file
+
+Note: Please read the contribution guidelines in the CONTRIBUTE.md file before contributing.
