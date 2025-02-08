@@ -15,6 +15,7 @@ const SignupBlock = ({ setIsSignUp }) => {
     password: "",
   });
   const [isValidationError, setIsValidationError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     axiosInstance,
@@ -79,6 +80,10 @@ const SignupBlock = ({ setIsSignUp }) => {
     setIsSignUp(false);
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <>
       <h1 className="text-lg font-bold">Create your account</h1>
@@ -97,12 +102,24 @@ const SignupBlock = ({ setIsSignUp }) => {
         error="Email required"
       />
 
-      <Input
-        label="Password"
-        onChange={(e) => onChangeHandler("password", e.target.value)}
-        showError={isValidationError && !regDetails.password}
-        error="Password Required"
-      />
+      <div className="relative">
+        <Input
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          onChange={(e) => onChangeHandler("password", e.target.value)}
+          showError={isValidationError && !regDetails.password}
+          error="Password Required"
+        />
+        <button
+          type="button"
+          onClick={togglePasswordVisibility}
+          className="absolute right-2 top-7 text-sm text-violet-600 focus:outline-none"
+        >
+          {showPassword ? "Hide" : "Show"}
+        </button>
+      </div>
+
+
 
       <Button isLoading={isLoading} onClick={signUpBtnHandler} name="SIGN UP" />
 
