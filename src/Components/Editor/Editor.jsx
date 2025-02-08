@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import JoditEditor, { Jodit } from "jodit-react";
+import JoditEditor from "jodit-react";
 import Prism from "prismjs";
 
 import "./Editor.css";
