@@ -8,6 +8,7 @@ import { LOGIN_API_ENDPOINT } from "../Config/UserApiEndPoints";
 import { useAuthCtx } from "../Contexts/AuthCtx";
 import { DASHBOARD_ROUTE_POINT } from "../Config/Routes";
 import SignupBlock from "../Components/Login/SignupBlock";
+import { FaEye,FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "12" });
@@ -76,9 +77,9 @@ const Login = () => {
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-2 top-7 text-sm text-violet-600 focus:outline-none"
+          className="absolute right-2 top-8 text-sm text-violet-600 focus:outline-none"
         >
-          {showPassword ? "Hide" : "Show"}
+          {showPassword ? <FaEyeSlash/> : <FaEye/>}
         </button>
       </div>
       <Button isLoading={isLoading} onClick={loginBtnHandler} name="SIGN IN" />

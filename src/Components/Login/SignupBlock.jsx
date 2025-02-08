@@ -7,6 +7,7 @@ import useAxios from "../../Hooks/useAxios";
 import { CREATE_ACCOUNT_API_ENDPOINT } from "../../Config/UserApiEndPoints";
 import { useAuthCtx } from "../../Contexts/AuthCtx";
 import { DASHBOARD_ROUTE_POINT } from "../../Config/Routes";
+import { FaEye,FaEyeSlash } from "react-icons/fa";
 
 const SignupBlock = ({ setIsSignUp }) => {
   const [regDetails, setRegDetails] = useState({
@@ -113,9 +114,9 @@ const SignupBlock = ({ setIsSignUp }) => {
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-2 top-7 text-sm text-violet-600 focus:outline-none"
+          className="absolute right-2 top-8 text-sm text-violet-600 focus:outline-none"
         >
-          {showPassword ? "Hide" : "Show"}
+          {showPassword ? <FaEyeSlash/> : <FaEye />}
         </button>
       </div>
 
