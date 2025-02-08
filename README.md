@@ -1,8 +1,7 @@
 # Installation
 1. Clone
 2. npm i
-3. create .env file and fill the credential as per .env.example
-4. np start
+3. npm start
 
 
 # Best practices
