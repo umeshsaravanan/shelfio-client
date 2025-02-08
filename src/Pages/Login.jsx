@@ -77,7 +77,7 @@ const Login = () => {
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-2 top-8 text-sm text-violet-600 focus:outline-none"
+          className="absolute right-2 top-8 text-sm  focus:outline-none"
         >
           {showPassword ? <FaEyeSlash/> : <FaEye/>}
         </button>
