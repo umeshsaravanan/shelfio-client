@@ -10,10 +10,10 @@ const Header = () => {
 
   const userName = user.name;
 
-  const splitName = userName.split("");
+  const splitName = userName?.split("");
   const firstTwoLeters =
-    splitName[0].charAt(0) +
-    (splitName[1] ? splitName[1].charAt(0).toUpperCase() : "");
+    splitName?.[0].charAt(0) +
+    (splitName?.[1] ? splitName?.[1].charAt(0).toUpperCase() : "");
 
   return (
     <header className="flex flex-col w-full px-5 bg-gray-900 text-white border_b ">

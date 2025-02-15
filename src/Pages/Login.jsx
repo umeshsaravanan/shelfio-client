@@ -9,6 +9,7 @@ import { useAuthCtx } from "../Contexts/AuthCtx";
 import { DASHBOARD_ROUTE_POINT } from "../Config/Routes";
 import SignupBlock from "../Components/Login/SignupBlock";
 import { FaEye,FaEyeSlash } from "react-icons/fa";
+import GoogleLoginButton from "../Components/Buttons/GoogleLoginButton";
 
 const Login = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "12" });
@@ -83,7 +84,7 @@ const Login = () => {
         </button>
       </div>
       <Button isLoading={isLoading} onClick={loginBtnHandler} name="SIGN IN" />
-
+      <GoogleLoginButton/>
       <div className="flex space-x-1 text-xs">
         <span>Don't have an account?</span>
         <button
