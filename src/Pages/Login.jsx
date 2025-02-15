@@ -1,111 +1,113 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-import Input from "../Components/Inputs/Input";
-import Button from "../Components/Buttons/Button";
-import useAxios from "../Hooks/useAxios";
-import { LOGIN_API_ENDPOINT } from "../Config/UserApiEndPoints";
-import { useAuthCtx } from "../Contexts/AuthCtx";
-import { DASHBOARD_ROUTE_POINT } from "../Config/Routes";
-import SignupBlock from "../Components/Login/SignupBlock";
-import { FaEye,FaEyeSlash } from "react-icons/fa";
+import LoginForm from "../Components/Login/LoginForm";
+import SignupForm from "../Components/Login/SignUpForm";
 
-const Login = () => {
-  const [loginData, setLoginData] = useState({ email: "", password: "12" });
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const {
-    axiosInstance,
-    handleError,
-    errorMsg,
-    setErrorMsg,
-    setIsLoading,
-    isLoading,
-  } = useAxios();
-
-  const { handleToken } = useAuthCtx();
-  const navigate = useNavigate();
-
-  const onChangeHandler = (type, value) => {
-    setErrorMsg("");
-
-    setLoginData((prevData) => {
-      return { ...prevData, [type]: value };
-    });
-  };
-
-  const loginBtnHandler = async () => {
-    try {
-      setIsLoading(true);
-      setErrorMsg("");
-      const { data } = await axiosInstance.post(LOGIN_API_ENDPOINT, loginData);
-
-      handleToken(data.token);
-
-      navigate(DASHBOARD_ROUTE_POINT);
-    } catch (error) {
-      handleError(error, false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onClickSignUpBtnHandler = () => {
-    setErrorMsg("");
-    setIsSignUp(true);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const loginHtml = (
-    <>
-      <h1 className="text-lg font-bold">Sign in</h1>
-
-      <Input
-        label="Email"
-        onChange={(e) => onChangeHandler("email", e.target.value)}
-      />
-      <div className="relative">
-        <Input
-          label="Password"
-          type={showPassword ? "text" : "password"}
-          onChange={(e) => onChangeHandler("password", e.target.value)}
-        />
-        <button
-          type="button"
-          onClick={togglePasswordVisibility}
-          className="absolute right-2 top-8 text-sm  focus:outline-none"
-        >
-          {showPassword ? <FaEyeSlash/> : <FaEye/>}
-        </button>
-      </div>
-      <Button isLoading={isLoading} onClick={loginBtnHandler} name="SIGN IN" />
-
-      <div className="flex space-x-1 text-xs">
-        <span>Don't have an account?</span>
-        <button
-          onClick={onClickSignUpBtnHandler}
-          className="text-xs text-violet-600"
-        >
-          Sign up
-        </button>
-      </div>
-    </>
-  );
-
+export default function Login() {
+  const [showLogin, setShowLogin] = useState(true);
   return (
-    <section className="h-screen bg-gradient-to-r from-violet-200 to-pink-200">
-      <div className="flex w-full h-full justify-center items-center ">
-        <div className="flex flex-col border rounded-lg p-10 space-y-5 min-w-96  bg-white shadow-md">
-          {isSignUp ? <SignupBlock setIsSignUp={setIsSignUp} /> : loginHtml}
-          {errorMsg && <p className="text-xs text-red-600">{errorMsg}</p>}
+    <div className="flex h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-indigo-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-purple-500/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative flex items-center justify-center w-full p-4">
+        <div className="flex bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl max-w-5xl w-full overflow-hidden">
+          {/* Left Panel */}
+          <div className="w-1/2 hidden lg:flex flex-col items-center justify-center p-12 bg-gradient-to-br from-indigo-700 to-purple-800 text-white relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute transform rotate-45 bg-white/20"
+                  style={{
+                    width: "200%",
+                    height: "40px",
+                    left: "-50%",
+                    top: `${i * 200}px`,
+                  }}
+                ></div>
+              ))}
+            </div>
+
+            <div className="relative z-10 text-center">
+              <div className="mb-8">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="w-24 h-24 mx-auto text-white"
+                >
+                  {/* Bookshelf Base */}
+                  <rect
+                    x="10"
+                    y="70"
+                    width="80"
+                    height="10"
+                    className="fill-current"
+                  />
+                  {/* Books */}
+                  <rect
+                    x="15"
+                    y="30"
+                    width="10"
+                    height="40"
+                    className="fill-current opacity-50"
+                  />
+                  <rect
+                    x="30"
+                    y="20"
+                    width="10"
+                    height="50"
+                    className="fill-current opacity-70"
+                  />
+                  <rect
+                    x="45"
+                    y="40"
+                    width="10"
+                    height="30"
+                    className="fill-current opacity-50"
+                  />
+                  <rect
+                    x="60"
+                    y="10"
+                    width="10"
+                    height="60"
+                    className="fill-current opacity-70"
+                  />
+                  <rect
+                    x="75"
+                    y="50"
+                    width="10"
+                    height="20"
+                    className="fill-current opacity-50"
+                  />
+                </svg>
+                <h1 className="text-3xl font-bold mt-4">shelf.io</h1>
+              </div>
+              <h2 className="text-2xl font-light mb-6">Welcome Back!</h2>
+              <p className="text-lg opacity-90">
+                Access your digital bookshelf and continue your learning journey
+              </p>
+              <div className="mt-12 space-y-4">
+                {/* <button className="w-full px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition">
+                  Learn More
+                </button>
+                <button className="w-full px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition">
+                  Contact Support
+                </button> */}
+              </div>
+            </div>
+          </div>
+
+          {showLogin ? (
+            <LoginForm onCreateAccount={() => setShowLogin(false)} />
+          ) : (
+            <SignupForm onSignIn={() => setShowLogin(true)} />
+          )}
         </div>
       </div>
-    </section>
+    </div>
   );
-};
-
-export default Login;
+}
