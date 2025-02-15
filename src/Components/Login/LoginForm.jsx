@@ -143,7 +143,7 @@ const LoginForm = ({ onCreateAccount }) => {
             </span>
           </label>
           <a
-            href="#"
+            href="/forgot-password"
             className="text-indigo-600 hover:text-indigo-800 transition"
           >
             Forgot password?
