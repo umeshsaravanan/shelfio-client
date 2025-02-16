@@ -1,5 +1,5 @@
 // Sidebar.js
-import React from "react";
+import React, { useState } from "react";
 import {
   FaBook,
   FaPlus,
@@ -8,9 +8,18 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { HiLibrary } from "react-icons/hi";
+import { GiBookshelf } from "react-icons/gi";
+
 import CreateBook from "../Books/CreateBook";
+import { useBookCtx } from "../../Contexts/BookCtx";
+import Books from "../Books/Books";
+import CreateShelf from "../Shelf/CreateShelf";
+import Shelf from "../Shelf/Shelf";
 
 const Sidebar = () => {
+  const { books, shelves } = useBookCtx();
+  const [selectedBook, setSelectedBook] = useState(undefined);
+
   return (
     <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
       <div className="p-6">
@@ -82,45 +91,20 @@ const Sidebar = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between px-2 mb-3">
               <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
-                <HiLibrary size={16} />
+                <GiBookshelf size={16} />
                 <span>Shelves</span>
               </div>
-              <button className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline">
-                New Shelf
-              </button>
+              <CreateShelf />
             </div>
 
-            {/* Study Materials Shelf */}
-            <div className="mb-3">
-              <button className="w-full flex items-center text-left px-2 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                <FaChevronDown size={16} className="mr-2" />
-                <span className="flex-1">Study Materials</span>
-                <span className="text-xs text-gray-500">3 books</span>
-              </button>
-              <div className="pl-6 mt-1 space-y-1">
-                <button className="w-full flex items-center text-left px-2 py-1.5 text-sm text-indigo-600 bg-indigo-50 rounded-lg">
-                  <FaBook size={16} className="mr-2" />
-                  <span>System Design</span>
-                </button>
-                <button className="w-full flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
-                  <FaBook size={16} className="mr-2" />
-                  <span>React Notes</span>
-                </button>
-                <button className="w-full flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
-                  <FaBook size={16} className="mr-2" />
-                  <span>AWS Notes</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Work Projects Shelf */}
-            <div>
-              <button className="w-full flex items-center text-left px-2 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                <FaChevronRight size={16} className="mr-2" />
-                <span className="flex-1">Work Projects</span>
-                <span className="text-xs text-gray-500">2 books</span>
-              </button>
-            </div>
+            {shelves &&
+              shelves.map((shelf) => (
+                <Shelf
+                  shelf_data={shelf}
+                  selectedBook={selectedBook}
+                  setSelectedBook={setSelectedBook}
+                />
+              ))}
           </div>
 
           {/* Unshelved Books */}
@@ -130,14 +114,17 @@ const Sidebar = () => {
               <span>Unshelved Books</span>
             </div>
             <div className="pl-4 space-y-1">
-              <button className="w-full flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
-                <FaBook size={16} className="mr-2" />
-                <span>Meeting Notes</span>
-              </button>
-              <button className="w-full flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg hover:bg-gray-50">
-                <FaBook size={16} className="mr-2" />
-                <span>Personal Journal</span>
-              </button>
+              {books &&
+                books.map((book) => (
+                  <Books
+                    onClick={() => {
+                      setSelectedBook({ id: book.id, name: book.title });
+                    }}
+                    key={book.id}
+                    bookData={book}
+                    selectedBook={selectedBook}
+                  />
+                ))}
             </div>
           </div>
         </div>

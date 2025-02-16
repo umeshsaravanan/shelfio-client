@@ -1,21 +1,39 @@
 import React, { useState } from "react";
+import { GiBookshelf } from "react-icons/gi";
 import { FaBook, FaBookmark, FaFileAlt, FaPlus } from "react-icons/fa";
 import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
+import Dropdown from "../Dropdown/Dropdown";
+import { icons } from "../Icons/ShelfIcons";
 
 const CreateBook = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [bookData, setBookData] = useState({
     title: "",
-    shelf: "",
+    shelf: { id: "", name: "", icon: "" },
     description: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const { createBook } = useBookCtx();
+  const { createBook, shelves } = useBookCtx();
 
   const handleChange = (e) => {
-    setBookData({ ...bookData, [e.target.name]: e.target.value });
+    setBookData({
+      ...bookData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const onDropdownChange = (selectedOption) => {
+    console.log({ selectedOption });
+    setBookData({
+      ...bookData,
+      shelf: {
+        id: selectedOption.id,
+        name: selectedOption.name,
+        icon: selectedOption.iconId,
+      },
+    });
   };
 
   const createBtnHandler = async () => {
@@ -23,11 +41,34 @@ const CreateBook = () => {
 
     setIsLoading(true);
 
-    await createBook(bookData);
+    await createBook({ ...bookData });
 
     setIsLoading(false);
     setShowPopup(false);
     setBookData({ title: "", shelf: "", description: "" });
+  };
+
+  const getSelfIcons = (shelfIcon) => {
+    const icon = icons?.[shelfIcon] || undefined;
+
+    return icon;
+  };
+
+  const getShelfDropdownOptions = (shelves) => {
+    const options = [];
+
+    if (shelves && shelves.length) {
+      shelves.map((shelf) =>
+        options.push({
+          id: shelf.id,
+          name: shelf.name,
+          icon: getSelfIcons(shelf?.icon),
+          iconId: shelf?.icon,
+        })
+      );
+    }
+
+    return options;
   };
 
   return (
@@ -62,7 +103,7 @@ const CreateBook = () => {
                 htmlFor="title"
                 className="text-sm font-medium flex items-center gap-2"
               >
-                <FaFileAlt className="w-4 h-4 text-indigo-500" />
+                <FaBook className="w-4 h-4 text-indigo-500" />
                 Book Title
               </label>
               <input
@@ -82,21 +123,18 @@ const CreateBook = () => {
                 htmlFor="shelf"
                 className="text-sm font-medium flex items-center gap-2"
               >
-                <FaBookmark className="w-4 h-4 text-indigo-500" />
+                <GiBookshelf className="w-4 h-4 text-indigo-500" />
                 Select Shelf
               </label>
-              <select
-                id="shelf"
-                name="shelf"
-                className="w-full h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={bookData.shelf}
-                onChange={handleChange}
-              >
-                <option value="">Choose a shelf (Optional)</option>
-                <option value="study">📚 Study Materials</option>
-                <option value="work">💼 Work Projects</option>
-                <option value="none">📖 Unshelved</option>
-              </select>
+              <Dropdown
+                defaultText="Choose a shelf (Optional)"
+                options={getShelfDropdownOptions(shelves)}
+                handleChange={onDropdownChange}
+                value={{
+                  name: bookData?.shelf?.name,
+                  icon: getSelfIcons(bookData?.shelf?.icon),
+                }}
+              />
             </div>
 
             {/* Description Input */}
@@ -130,13 +168,14 @@ const CreateBook = () => {
             <button
               onClick={createBtnHandler}
               disabled={!bookData.title.trim() || isLoading}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                bookData.title.trim()
-                  ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg ${
+                !bookData.title.trim()
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-indigo-700"
               }`}
             >
-              {isLoading ? "Creating..." : "Create Book"}
+              <FaPlus className="w-4 h-4 inline-block mr-2" />
+              Create Book
             </button>
           </div>
         </>
