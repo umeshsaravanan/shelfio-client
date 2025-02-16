@@ -182,7 +182,7 @@ const LoginForm = ({ onCreateAccount }) => {
           )}
         </button>
 
-        <GoogleLoginButton/>
+        <GoogleLoginButton />
 
         {errorMsg && (
           <p className="text-xs text-red-600 text-center">{errorMsg}</p>

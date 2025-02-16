@@ -1,7 +1,9 @@
 import React from "react";
 import { FaPlus, FaCog, FaChevronRight } from "react-icons/fa";
+import { useAuthCtx } from "../../Contexts/AuthCtx";
 
 const NavbarNew = ({ navAddress = [] }) => {
+  const { logoutHandler } = useAuthCtx();
   return (
     <div className="h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center gap-2 cursor-default">
@@ -33,6 +35,13 @@ const NavbarNew = ({ navAddress = [] }) => {
 
         <button className="p-2 hover:bg-gray-100 rounded-lg">
           <FaCog size={20} className="text-gray-600" />
+        </button>
+
+        <button
+          onClick={logoutHandler}
+          className={`px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg`}
+        >
+          Log out
         </button>
       </div>
     </div>
