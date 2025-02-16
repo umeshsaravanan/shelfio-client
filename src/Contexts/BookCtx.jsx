@@ -19,6 +19,7 @@ const BookCtxApi = createContext();
 const useBookCtx = () => useContext(BookCtxApi);
 
 const BookCtx = ({ children }) => {
+  const [contentOnMainPage, SetContentOnMainPage] = useState(undefined);
   const [books, setBooks] = useState();
   const [shelves, setShelves] = useState();
   const [allNotes, setAllNotes] = useState();
@@ -122,6 +123,8 @@ const BookCtx = ({ children }) => {
         selectedNote,
         updateNote,
         getBooks,
+        contentOnMainPage,
+        SetContentOnMainPage,
         showOverlayLoading,
         setShowOverlayLoading,
       }}

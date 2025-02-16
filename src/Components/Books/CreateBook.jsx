@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GiBookshelf } from "react-icons/gi";
-import { FaBook, FaBookmark, FaFileAlt, FaPlus } from "react-icons/fa";
+import { FaBook, FaFileAlt, FaPlus } from "react-icons/fa";
 import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import Dropdown from "../Dropdown/Dropdown";
@@ -161,7 +161,7 @@ const CreateBook = () => {
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-2">
             <button
               onClick={() => setShowPopup(false)}
-              className="px-4 py-2 border bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>

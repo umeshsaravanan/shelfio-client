@@ -1,13 +1,6 @@
 // Sidebar.js
 import React, { useState } from "react";
-import {
-  FaBook,
-  FaPlus,
-  FaSearch,
-  FaChevronRight,
-  FaChevronDown,
-} from "react-icons/fa";
-import { HiLibrary } from "react-icons/hi";
+import { FaBook, FaSearch } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 
 import CreateBook from "../Books/CreateBook";
@@ -17,8 +10,12 @@ import CreateShelf from "../Shelf/CreateShelf";
 import Shelf from "../Shelf/Shelf";
 
 const Sidebar = () => {
-  const { books, shelves } = useBookCtx();
+  const { books, shelves, SetContentOnMainPage } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
+
+  const setWhatToLoadOnMainPage = (config) => {
+    SetContentOnMainPage(config);
+  };
 
   return (
     <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
@@ -82,7 +79,6 @@ const Sidebar = () => {
           />
         </div>
 
-        {/* New Book Button */}
         <CreateBook />
 
         {/* Books List */}
@@ -100,6 +96,7 @@ const Sidebar = () => {
             {shelves &&
               shelves.map((shelf) => (
                 <Shelf
+                  onClick={setWhatToLoadOnMainPage}
                   shelf_data={shelf}
                   selectedBook={selectedBook}
                   setSelectedBook={setSelectedBook}
@@ -118,6 +115,10 @@ const Sidebar = () => {
                 books.map((book) => (
                   <Books
                     onClick={() => {
+                      setWhatToLoadOnMainPage({
+                        config: book,
+                        type: "unShelvedBook",
+                      });
                       setSelectedBook({ id: book.id, name: book.title });
                     }}
                     key={book.id}

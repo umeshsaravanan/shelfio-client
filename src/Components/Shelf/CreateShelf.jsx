@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import {
-  FaPlus,
-  FaBook,
-  FaBriefcase,
-  FaBookmark,
-  FaFolder,
-  FaArchive,
-  FaBox,
-} from "react-icons/fa";
-import { RiFileTextLine, RiHomeLine } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
+import { RiFileTextLine } from "react-icons/ri";
 import { GiBookshelf } from "react-icons/gi";
 import { MdOutlineInsertEmoticon } from "react-icons/md";
 
