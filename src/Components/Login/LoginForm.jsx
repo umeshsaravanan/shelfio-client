@@ -142,12 +142,12 @@ const LoginForm = ({ onCreateAccount }) => {
               Remember me
             </span>
           </label>
-          <a
-            href="/forgot-password"
-            className="text-indigo-600 hover:text-indigo-800 transition"
+          <span
+            className="text-indigo-600 hover:text-indigo-800 transition cursor-pointer"
+            onClick={() => navigate("/forgot-password")}
           >
             Forgot password?
-          </a>
+          </span>
         </div>
 
         <button
