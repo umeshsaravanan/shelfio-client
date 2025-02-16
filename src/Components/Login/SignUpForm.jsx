@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import useAxios from "../../Hooks/useAxios";
@@ -94,6 +94,7 @@ const SignupForm = ({ onSignIn }) => {
               onChange={(e) => onChangeHandler("email", e.target.value)}
               className="flex-1 outline-none text-gray-700 placeholder-gray-400 bg-transparent"
             />
+            <FaEnvelope className="text-gray-400 ml-2 h-5 w-5" />
           </div>
           {validationErrors?.email && (
             <span className="text-red-600 text-xs">

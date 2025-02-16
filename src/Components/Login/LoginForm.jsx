@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import useAxios from "../../Hooks/useAxios";
@@ -7,6 +7,7 @@ import { useAuthCtx } from "../../Contexts/AuthCtx";
 import { LOGIN_API_ENDPOINT } from "../../Config/UserApiEndPoints";
 import { DASHBOARD_ROUTE_POINT } from "../../Config/Routes";
 import { validateLogin } from "./Validations";
+import GoogleLoginButton from "../Buttons/GoogleLoginButton";
 
 const LoginForm = ({ onCreateAccount }) => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -88,7 +89,7 @@ const LoginForm = ({ onCreateAccount }) => {
               onChange={(e) => onChangeHandler("email", e.target.value)}
               className="flex-1 outline-none text-gray-700 placeholder-gray-400 bg-transparent"
             />
-            <FaUser className="text-gray-400 ml-2 h-5 w-5" />
+            <FaEnvelope className="text-gray-400 ml-2 h-5 w-5" />
           </div>
 
           {validationErrors?.email && (
@@ -140,12 +141,12 @@ const LoginForm = ({ onCreateAccount }) => {
               Remember me
             </span>
           </label>
-          <a
-            href="/forgot-password"
-            className="text-indigo-600 hover:text-indigo-800 transition"
+          <span
+            className="text-indigo-600 hover:text-indigo-800 transition cursor-pointer"
+            onClick={() => navigate("/forgot-password")}
           >
             Forgot password?
-          </a>
+          </span>
         </div>
 
         <button
@@ -180,6 +181,8 @@ const LoginForm = ({ onCreateAccount }) => {
             "Sign in"
           )}
         </button>
+
+        <GoogleLoginButton/>
 
         {errorMsg && (
           <p className="text-xs text-red-600 text-center">{errorMsg}</p>
