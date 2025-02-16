@@ -1,14 +1,14 @@
 import React from "react";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
-import Button from "./Button";
 import useAxios from "../../Hooks/useAxios";
 import { useAuthCtx } from "../../Contexts/AuthCtx";
+import { FcGoogle } from "react-icons/fc";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const GoogleLogin = () => {
 
-    const { axiosInstance, isLoading, setErrorMsg } = useAxios();
+    const { axiosInstance, setErrorMsg } = useAxios();
     const { handleToken } = useAuthCtx();
 
     const login = useGoogleLogin({
@@ -35,7 +35,10 @@ const GoogleLogin = () => {
     });
 
     return (
-      <Button isLoading={isLoading} onClick={login} name="Continue With Google" type = "secondary" customClassNames="h-12 duration-200" />
+        <button onClick={login} className=" border rounded-lg text-sm font-semibold p-2 border-gray-900 hover:bg-gray-900 hover:text-white flex justify-center items-center w-full gap-2 h-12 duration-200">
+            <FcGoogle className="text-xl" />
+            Continue With Google
+        </button>
     );
 };
 
