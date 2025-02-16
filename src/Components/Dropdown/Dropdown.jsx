@@ -9,8 +9,6 @@ const Dropdown = ({ defaultText, options, value, handleChange }) => {
   };
 
   const getSelectedOption = (option) => {
-    console.log(option);
-
     let selectedDisplay;
 
     if (option.icon) {
