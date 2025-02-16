@@ -7,6 +7,7 @@ import { useAuthCtx } from "../../Contexts/AuthCtx";
 import { LOGIN_API_ENDPOINT } from "../../Config/UserApiEndPoints";
 import { DASHBOARD_ROUTE_POINT } from "../../Config/Routes";
 import { validateLogin } from "./Validations";
+import GoogleLoginButton from "../Buttons/GoogleLoginButton";
 
 const LoginForm = ({ onCreateAccount }) => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -182,6 +183,8 @@ const LoginForm = ({ onCreateAccount }) => {
             "Sign in"
           )}
         </button>
+
+        <GoogleLoginButton/>
 
         {errorMsg && (
           <p className="text-xs text-red-600 text-center">{errorMsg}</p>
