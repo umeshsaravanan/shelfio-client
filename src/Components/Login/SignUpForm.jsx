@@ -62,9 +62,7 @@ const SignupForm = ({ onSignIn }) => {
 
   return (
     <div className="w-full lg:w-1/2 p-8 md:p-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">
-        Create an Account
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">Sign up</h2>
       <div className="space-y-6" onSubmit={signUpBtnHandler}>
         <div className="space-y-2">
           <label className="block text-gray-700 font-medium">Full Name</label>

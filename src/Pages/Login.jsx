@@ -90,14 +90,7 @@ export default function Login() {
               <p className="text-lg opacity-90">
                 Access your digital bookshelf and continue your learning journey
               </p>
-              <div className="mt-12 space-y-4">
-                {/* <button className="w-full px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition">
-                  Learn More
-                </button>
-                <button className="w-full px-6 py-3 bg-white/10 rounded-lg hover:bg-white/20 transition">
-                  Contact Support
-                </button> */}
-              </div>
+              <div className="mt-12 space-y-4"></div>
             </div>
           </div>
 
