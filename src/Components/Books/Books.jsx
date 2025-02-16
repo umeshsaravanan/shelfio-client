@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaBook } from "react-icons/fa";
 
 import InlinePopup from "../Popup/InlinePopup";
 import useAxios from "../../Hooks/useAxios";
@@ -90,14 +91,14 @@ const Books = ({ bookData, onClick, selectedBook }) => {
     <div
       onClick={onClick}
       className={
-        "flex items-center justify-between cursor-pointer hover:bg-slate-100 p-1 px-2 hover:rounded-lg group" +
-        (selectedBook.id === bookData.id || openMenu
-          ? " bg-slate-100 rounded-md"
-          : "")
+        "w-full cursor-pointer flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg " +
+        (selectedBook?.id === bookData.id || openMenu
+          ? " text-indigo-600 bg-indigo-50  "
+          : " hover:bg-gray-50")
       }
     >
       <div className="flex items-center space-x-2">
-        <span className="material-symbols-outlined text-sm">book_4</span>
+        <FaBook size={16} className="mr-2" />
         {isrename ? (
           <input
             type="text"
@@ -107,7 +108,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
             ref={ref1}
           />
         ) : (
-          <h5>{dataTitle}</h5>
+          <span>{dataTitle}</span>
         )}
       </div>
 

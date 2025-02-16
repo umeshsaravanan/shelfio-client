@@ -8,14 +8,20 @@ import React, {
 
 import useAxios from "../Hooks/useAxios";
 import { NOTE_API_ENDPOINT } from "../Config/NotesApiEndPoints";
-import { BOOK_API_ENDPOINT } from "../Config/BoookApiEndpoints";
+import {
+  BOOK_API_ENDPOINT,
+  SHELVES_API_ENDPOINT,
+  UN_SHELVED_BOOKS_API_ENDPOINT,
+} from "../Config/BoookApiEndpoints";
 
 const BookCtxApi = createContext();
 
 const useBookCtx = () => useContext(BookCtxApi);
 
 const BookCtx = ({ children }) => {
+  const [contentOnMainPage, SetContentOnMainPage] = useState(undefined);
   const [books, setBooks] = useState();
+  const [shelves, setShelves] = useState();
   const [allNotes, setAllNotes] = useState();
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
 
@@ -27,14 +33,40 @@ const BookCtx = ({ children }) => {
     try {
       await axiosInstance.post(BOOK_API_ENDPOINT, payload);
       getBooks();
+      getShelves();
     } catch (error) {
       handleError(error);
     }
   };
 
+  const createShelf = async (payload) => {
+    try {
+      await axiosInstance.post(SHELVES_API_ENDPOINT, payload);
+      getBooks();
+      getShelves();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const getShelves = async () => {
+    try {
+      const { data } = await axiosInstance.get(SHELVES_API_ENDPOINT);
+
+      setShelves(data);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  useEffect(() => {
+    getShelves();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const getBooks = async () => {
     try {
-      const { data } = await axiosInstance.get(BOOK_API_ENDPOINT);
+      const { data } = await axiosInstance.get(UN_SHELVED_BOOKS_API_ENDPOINT);
 
       setBooks(data);
     } catch (error) {
@@ -82,13 +114,17 @@ const BookCtx = ({ children }) => {
       value={{
         books,
         createBook,
+        createShelf,
         createNote,
         getAllNotes,
         allNotes,
+        shelves,
         setAllNotes,
         selectedNote,
         updateNote,
         getBooks,
+        contentOnMainPage,
+        SetContentOnMainPage,
         showOverlayLoading,
         setShowOverlayLoading,
       }}

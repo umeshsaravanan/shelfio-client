@@ -13,6 +13,7 @@ const LoginForm = ({ onCreateAccount }) => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     axiosInstance,
@@ -24,8 +25,6 @@ const LoginForm = ({ onCreateAccount }) => {
   } = useAxios();
   const { handleToken } = useAuthCtx();
   const navigate = useNavigate();
-
-  const [rememberMe, setRememberMe] = useState(false);
 
   const onChangeHandler = (type, value) => {
     setErrorMsg("");
@@ -77,9 +76,7 @@ const LoginForm = ({ onCreateAccount }) => {
 
   return (
     <div className="w-full lg:w-1/2 p-8 md:p-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">
-        Log in to shelf.io
-      </h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">Log in</h2>
       <div className="space-y-6">
         <div className="space-y-2">
           <label className="block text-gray-700 font-medium">Email</label>
@@ -136,6 +133,7 @@ const LoginForm = ({ onCreateAccount }) => {
           <label className="flex items-center text-gray-600 cursor-pointer group">
             <input
               onChange={handleRememberMe}
+              checked={rememberMe}
               type="checkbox"
               className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
@@ -184,7 +182,7 @@ const LoginForm = ({ onCreateAccount }) => {
           )}
         </button>
 
-        <GoogleLoginButton/>
+        <GoogleLoginButton />
 
         {errorMsg && (
           <p className="text-xs text-red-600 text-center">{errorMsg}</p>

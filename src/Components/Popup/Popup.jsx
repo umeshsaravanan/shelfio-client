@@ -1,21 +1,23 @@
-import CloseButton from "../Buttons/CloseButton";
+import React from "react";
+import ReactDOM from "react-dom";
 
-const Popup = ({ heading, onClose, children, show }) => {
-  if (!show) return null;
+const Popup = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
 
-  return (
-    <>
-      <section className="absolute left-72 z-20 flex flex-col min-w-96 bg-white border-4 rounded-lg shadow-lg ">
-        <div className="flex justify-between border-b rounded-t-lg py-2 px-5">
-          <h5 className="font-bold">{heading}</h5>
-          <CloseButton onClick={onClose} />
-        </div>
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      {/* Overlay */}
+      <div
+        className="fixed inset-0 bg-black opacity-50"
+        onClick={onClose}
+      ></div>
 
-        <div className="w-full h-full p-5">{children}</div>
-      </section>
-
-      <div className="fixed inset-0 backdrop-contrast-50 z-10"></div>
-    </>
+      {/* Modal content */}
+      <div className="bg-white rounded-lg overflow-hidden shadow-lg transform transition-all sm:max-w-lg w-full">
+        {children}
+      </div>
+    </div>,
+    document.getElementById("root")
   );
 };
 
