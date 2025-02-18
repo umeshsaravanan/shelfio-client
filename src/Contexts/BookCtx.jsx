@@ -79,6 +79,18 @@ const BookCtx = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getBooksOfShelf = async (id) => {
+    try {
+      const { data } = await axiosInstance.get(
+        BOOK_API_ENDPOINT + "?shelf=" + id
+      );
+
+      return data;
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const createNote = async (payload) => {
     try {
       await axiosInstance.post(NOTE_API_ENDPOINT, payload);
@@ -117,6 +129,7 @@ const BookCtx = ({ children }) => {
         createShelf,
         createNote,
         getAllNotes,
+        getBooksOfShelf,
         allNotes,
         shelves,
         setAllNotes,
