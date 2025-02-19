@@ -2,7 +2,6 @@ import React from "react";
 import { FaPlus } from "react-icons/fa";
 
 import { useBookCtx } from "../../Contexts/BookCtx";
-import AddButton from "../Buttons/AddButton";
 
 const CreateNote = ({ bookId, shelf }) => {
   const { createNote, setShowOverlayLoading } = useBookCtx();
