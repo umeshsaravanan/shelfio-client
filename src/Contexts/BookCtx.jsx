@@ -106,6 +106,8 @@ const BookCtx = ({ children }) => {
       const { data } = await axiosInstance(NOTE_API_ENDPOINT + "?id=" + bookId);
 
       setAllNotes(data);
+
+      return data;
     } catch (error) {
       handleError(error);
     }
