@@ -1,1 +1,1 @@
-export const NOTE_API_ENDPOINT = "/note";
+export const PAGE_API_ENDPOINT = "/note";

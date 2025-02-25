@@ -1,20 +1,32 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Books from "../Books/Books";
+import { useNavigate } from "react-router-dom";
 
 const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { name, books } = shelf_data;
+  const navigate = useNavigate();
 
   const chevronOnclickHandler = (e) => {
     e.stopPropagation();
     setIsOpen((prev) => !prev);
   };
 
+  const onClickHandler = (shelf, book) => {
+    let link = `/shelf/${shelf.name}/${shelf.id}`;
+
+    if (book) {
+      link += `/book/${book.title}/${book.id}`;
+    }
+
+    navigate(link);
+  };
+
   return (
     <div className="mb-3">
       <button
-        onClick={() => onClick({ config: shelf_data, type: "shelf" })}
+        onClick={() => onClickHandler(shelf_data)}
         className="w-full flex items-center text-left px-2 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
       >
         <div onClick={chevronOnclickHandler}>
@@ -39,7 +51,7 @@ const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
                   selectedBook={selectedBook}
                   bookData={book}
                   onClick={() => {
-                    onClick({ config: book, type: "book", shelf: shelf_data });
+                    onClickHandler(shelf_data, book);
                     setSelectedBook({ id: book.id, name: book.title });
                   }}
                 />
