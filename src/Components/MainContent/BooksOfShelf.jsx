@@ -4,15 +4,13 @@ import { BOOK_API_ENDPOINT } from "../../Config/BoookApiEndpoints";
 import ShelfLoader from "../Loader/ShelfLoader";
 import Card from "../Card/Card";
 import { FaFileAlt } from "react-icons/fa";
-import CreateNote from "../Notes/CreateNote";
-import { useBookCtx } from "../../Contexts/BookCtx";
 import { useNavigate, useParams } from "react-router-dom";
 
 const BooksOfShelf = ({ shelfId }) => {
   const [books, setBooks] = useState();
   const { axiosInstance, handleError, isLoading, setIsLoading } = useAxios();
   const navigate = useNavigate();
-  const { parentType, parentName, parentId } = useParams();
+  const { parentName, parentId } = useParams();
 
   const getBooksOfShelf = async (id) => {
     try {
@@ -32,6 +30,8 @@ const BooksOfShelf = ({ shelfId }) => {
 
   useEffect(() => {
     getBooksOfShelf(shelfId);
+
+    //eslint-disable-next-line
   }, [shelfId]);
 
   const onClickHandler = (book) => {

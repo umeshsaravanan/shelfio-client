@@ -4,7 +4,6 @@ import useAxios from "../../Hooks/useAxios";
 import { PAGE_API_ENDPOINT } from "../../Config/NotesApiEndPoints";
 import ShelfLoader from "../Loader/ShelfLoader";
 import Card from "../Card/Card";
-import { FaFileAlt } from "react-icons/fa";
 import EditorWrapper from "../Editor/EditorWrapper";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,7 +22,6 @@ const PagesOfBook = ({ bookId }) => {
     child1Name,
     child1Id,
     child2Type,
-    child2Name,
     child2Id,
   } = useParams();
 
@@ -43,6 +41,8 @@ const PagesOfBook = ({ bookId }) => {
 
   useEffect(() => {
     getPagesOfBook(bookId);
+
+    //eslint-disable-next-line
   }, [bookId]);
 
   useEffect(() => {
@@ -62,6 +62,8 @@ const PagesOfBook = ({ bookId }) => {
     if (selectedPageIndex !== -1) {
       setSelectedPage(pages[selectedPageIndex]);
     }
+
+    //eslint-disable-next-line
   }, [pages]);
 
   const onSaveHandler = (type, value) => {

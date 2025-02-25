@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { useBookCtx } from "../../Contexts/BookCtx";
 import NavbarNew from "../Header/NavbarNew";
-import PagesWithEditor from "./PagesWithEditor";
-import Pages from "./Pages";
 import BooksOfShelf from "./BooksOfShelf";
 import { useParams } from "react-router-dom";
 import PagesOfBook from "./PagesOfBook";
@@ -14,15 +12,9 @@ export const MAIN_CONTENT_TYPE = {
 };
 
 const MainContent = () => {
-  const {
-    contentOnMainPage,
-    SetContentOnMainPage,
-    getBooksOfShelf,
-    getAllNotes,
-    updateNote,
-  } = useBookCtx();
-  const [card, setCard] = useState([]);
-  const [page, setPage] = useState(null); // Track the active page
+  const { contentOnMainPage, getBooksOfShelf, getAllNotes } = useBookCtx();
+  const [card, setCard] = useState([]); //eslint-disable-line
+  const [page, setPage] = useState(null); //eslint-disable-line
   const [navAddress, setNavAddress] = useState([]);
 
   const {
@@ -32,9 +24,7 @@ const MainContent = () => {
     child1Type,
     child1Name,
     child1Id,
-    child2Type,
     child2Name,
-    child2Id,
   } = useParams();
 
   let navigationLinks = [];
@@ -113,19 +103,19 @@ const MainContent = () => {
     //eslint-disable-next-line
   }, [contentOnMainPage]);
 
-  const onClickHandler = (clickedData, type, shelf) => {
-    if (type === "page") {
-      setPage(clickedData); // Set the active page
-    } else {
-      SetContentOnMainPage({ config: clickedData, type, shelf });
-    }
-  };
+  // const onClickHandler = (clickedData, type, shelf) => {
+  //   if (type === "page") {
+  //     setPage(clickedData); // Set the active page
+  //   } else {
+  //     SetContentOnMainPage({ config: clickedData, type, shelf });
+  //   }
+  // };
 
-  const onSaveHandler = (type, value) => {
-    const updatedPage = { ...page, [type]: value };
-    setPage(updatedPage);
-    updateNote(updatedPage);
-  };
+  // const onSaveHandler = (type, value) => {
+  //   const updatedPage = { ...page, [type]: value };
+  //   setPage(updatedPage);
+  //   updateNote(updatedPage);
+  // };
 
   const type = child1Type || parentType;
   const id = child1Id || parentId;

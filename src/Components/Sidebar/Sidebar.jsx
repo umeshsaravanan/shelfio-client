@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { FaBook, FaSearch } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
-import { useParams } from "react-router-dom";
 
 import CreateBook from "../Books/CreateBook";
 import { useBookCtx } from "../../Contexts/BookCtx";
@@ -13,8 +12,6 @@ import Shelf from "../Shelf/Shelf";
 const Sidebar = () => {
   const { books, shelves, SetContentOnMainPage } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
-
-  const { type, id } = useParams();
 
   const setWhatToLoadOnMainPage = (id, type) => {
     SetContentOnMainPage({ id, type });
