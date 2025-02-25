@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 import useAxios from "../Hooks/useAxios";
-import { NOTE_API_ENDPOINT } from "../Config/NotesApiEndPoints";
+import { PAGE_API_ENDPOINT } from "../Config/NotesApiEndPoints";
 import {
   BOOK_API_ENDPOINT,
   SHELVES_API_ENDPOINT,
@@ -36,6 +36,20 @@ const BookCtx = ({ children }) => {
       getShelves();
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const deleteBook = async (id) => {
+    setShowOverlayLoading(true);
+
+    try {
+      await axiosInstance.delete(BOOK_API_ENDPOINT + "?id=" + id);
+      getShelves();
+      getBooks();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setShowOverlayLoading(false);
     }
   };
 
@@ -93,7 +107,7 @@ const BookCtx = ({ children }) => {
 
   const createNote = async (payload) => {
     try {
-      await axiosInstance.post(NOTE_API_ENDPOINT, payload);
+      await axiosInstance.post(PAGE_API_ENDPOINT, payload);
 
       getAllNotes(payload.book_id);
     } catch (error) {
@@ -101,11 +115,13 @@ const BookCtx = ({ children }) => {
     }
   };
 
-  const getAllNotes = async (bookId) => {
+  const getAllNotes = async (bookId, callback) => {
     try {
-      const { data } = await axiosInstance(NOTE_API_ENDPOINT + "?id=" + bookId);
+      const { data } = await axiosInstance(PAGE_API_ENDPOINT + "?id=" + bookId);
 
       setAllNotes(data);
+
+      if (callback) callback(data);
 
       return data;
     } catch (error) {
@@ -115,9 +131,7 @@ const BookCtx = ({ children }) => {
 
   const updateNote = async (content) => {
     try {
-      await axiosInstance.put(NOTE_API_ENDPOINT, content);
-
-      getAllNotes(content.book_id);
+      await axiosInstance.put(PAGE_API_ENDPOINT, content);
     } catch (error) {
       handleError(error);
     }
@@ -131,6 +145,7 @@ const BookCtx = ({ children }) => {
         createShelf,
         createNote,
         getAllNotes,
+        deleteBook,
         getBooksOfShelf,
         allNotes,
         shelves,

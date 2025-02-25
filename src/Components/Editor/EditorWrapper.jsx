@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Editor from "./Editor"; // Import your existing Editor component
 
-const EditorWrapper = ({ onSave, initialTitle = "", initialContent = "" }) => {
+const EditorWrapper = ({
+  onSave,
+  initialTitle = "",
+  initialContent = "",
+  onTitleChange,
+}) => {
   const [title, setTitle] = useState(initialTitle); // State for the page title
   const [content, setContent] = useState(initialContent); // State for the editor content
 
@@ -16,6 +21,7 @@ const EditorWrapper = ({ onSave, initialTitle = "", initialContent = "" }) => {
   // Handle title change
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
+    onTitleChange(e.target.value);
   };
 
   // Handle content change (passed to the Editor component)

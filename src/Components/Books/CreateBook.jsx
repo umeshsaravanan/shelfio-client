@@ -25,7 +25,6 @@ const CreateBook = () => {
   };
 
   const onDropdownChange = (selectedOption) => {
-    console.log({ selectedOption });
     setBookData({
       ...bookData,
       shelf: {
