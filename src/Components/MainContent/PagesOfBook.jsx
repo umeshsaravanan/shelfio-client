@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import useAxios from "../../Hooks/useAxios";
-import { PAGE_API_ENDPOINT } from "../../Config/NotesApiEndPoints";
 import ShelfLoader from "../Loader/ShelfLoader";
 import Card from "../Card/Card";
 import EditorWrapper from "../Editor/EditorWrapper";
