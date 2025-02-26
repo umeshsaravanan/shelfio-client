@@ -32,7 +32,7 @@ const EditorWrapper = ({
   };
 
   return (
-    <div className="editor-wrapper bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-md overflow-hidden">
       {/* Title Input */}
       <div className="p-6 border-b border-gray-200">
         <input

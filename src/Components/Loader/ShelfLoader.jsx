@@ -30,10 +30,10 @@ const ShelfLoader = ({
           {/* Animated Books */}
           {[
             { x: 15, y: 30, height: 40, delay: 0 },
-            { x: 30, y: 20, height: 50, delay: 1 },
-            { x: 45, y: 40, height: 30, delay: 2 },
-            { x: 60, y: 10, height: 60, delay: 3 },
-            { x: 75, y: 50, height: 20, delay: 4 },
+            { x: 30, y: 20, height: 50, delay: 0.3 },
+            { x: 45, y: 40, height: 30, delay: 0.6 },
+            { x: 60, y: 10, height: 60, delay: 0.9 },
+            { x: 75, y: 50, height: 20, delay: 1.2 },
           ].map((book, index) => (
             <rect
               key={index}
@@ -43,14 +43,14 @@ const ShelfLoader = ({
               height={book.height}
               className="fill-current opacity-90"
               style={{
-                animation: "bookRead 5s linear infinite",
+                animation: "bookRead 3s linear infinite",
                 animationDelay: `${book.delay}s`,
               }}
             />
           ))}
         </svg>
 
-        <div className={` font-medium ${color} text-center`}>
+        <div className={`font-medium ${color} text-center`}>
           <span>{loadingText}</span>
           <span className="inline-block w-8 text-left">{dots}</span>
         </div>
@@ -58,22 +58,22 @@ const ShelfLoader = ({
         <style jsx>{`
           @keyframes bookRead {
             0%,
-            20% {
+            10% {
               transform: translateY(0);
             }
-            25% {
+            15% {
               transform: translateY(-10px);
             }
-            30%,
-            50% {
+            20%,
+            40% {
               transform: translateY(-70px);
               opacity: 0.3;
             }
-            55% {
+            45% {
               transform: translateY(-10px);
               opacity: 0.9;
             }
-            60%,
+            50%,
             100% {
               transform: translateY(0);
             }

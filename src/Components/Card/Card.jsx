@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import moment from "moment";
-import { FaBook, FaEllipsisV } from "react-icons/fa";
+import { FaBook, FaEllipsisV, FaTrash, FaEdit } from "react-icons/fa"; // Import FaEdit
 import UserConfirmation from "../Popup/UserConfirmation";
 
 const Card = ({
@@ -10,10 +10,12 @@ const Card = ({
   onClick,
   isActive,
   onDelete,
+  onEdit, // Add onEdit prop
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const dateTime = updatedTime ? moment(updatedTime).fromNow() : undefined;
+  const menuRef = useRef(null);
 
   const handleDelete = () => {
     setIsConfirmOpen(true);
@@ -28,10 +30,29 @@ const Card = ({
 
   const cancelDelete = (e) => {
     e.stopPropagation();
-
     setIsConfirmOpen(false);
     setIsMenuOpen(false);
   };
+
+  const handleEdit = (e) => {
+    e.stopPropagation();
+    onEdit(); // Trigger the edit action
+    setIsMenuOpen(false); // Close the dropdown
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
@@ -61,13 +82,15 @@ const Card = ({
         </div>
 
         {/* Kebab Menu */}
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            className="p-1 hidden group-hover:block : hover:bg-gray-100 rounded-full"
+            className={`p-1 ${
+              isMenuOpen ? " " : " hidden "
+            } group-hover:block hover:bg-gray-100 rounded-full`}
           >
             <FaEllipsisV size={16} className="text-gray-600" />
           </button>
@@ -81,14 +104,26 @@ const Card = ({
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
+                {/* Edit Option */}
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  role="menuitem"
+                >
+                  <FaEdit className="mr-2" />
+                  Edit
+                </button>
+
+                {/* Delete Option */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete();
                   }}
-                  className="block w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                   role="menuitem"
                 >
+                  <FaTrash className="mr-2" />
                   Delete
                 </button>
               </div>
@@ -103,7 +138,7 @@ const Card = ({
       {/* Confirmation Dialog */}
       {isConfirmOpen && (
         <UserConfirmation
-          message="Are you sure you want to delete this book?"
+          message={`Are you sure you want to delete <b>${title}</b> ?`}
           cancelDelete={cancelDelete}
           confirmDelete={confirmDelete}
         />

@@ -21,31 +21,47 @@ const useBookCtx = () => useContext(BookCtxApi);
 const BookCtx = ({ children }) => {
   const [contentOnMainPage, SetContentOnMainPage] = useState(undefined);
   const [books, setBooks] = useState();
+  const [unShelvedBooks, setUnShelvedBooks] = useState([]);
   const [shelves, setShelves] = useState();
   const [allNotes, setAllNotes] = useState();
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
+  const [pages, setPages] = useState();
+  const [selectedPage, setSelectedPage] = useState();
 
   const selectedNote = useRef();
 
   const { axiosInstance, handleError } = useAxios();
 
+  const getPagesOfBook = async (id) => {
+    try {
+      const { data } = await axiosInstance.get(PAGE_API_ENDPOINT + "?id=" + id);
+      setSelectedPage({ index: 0, page: data[0] });
+      setPages(data);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const createBook = async (payload) => {
     try {
       await axiosInstance.post(BOOK_API_ENDPOINT, payload);
-      getBooks();
+      getBooksOfShelf(payload.shelf.id);
+      getUnShelvedBooks();
       getShelves();
     } catch (error) {
       handleError(error);
     }
   };
 
-  const deleteBook = async (id) => {
+  const deleteBook = async (id, shelfId) => {
     setShowOverlayLoading(true);
 
     try {
       await axiosInstance.delete(BOOK_API_ENDPOINT + "?id=" + id);
+
+      getBooksOfShelf(shelfId);
+      getUnShelvedBooks();
       getShelves();
-      getBooks();
     } catch (error) {
       handleError(error);
     } finally {
@@ -53,10 +69,19 @@ const BookCtx = ({ children }) => {
     }
   };
 
+  const updateBook = async (content) => {
+    try {
+      await axiosInstance.put(BOOK_API_ENDPOINT, content);
+      await getBooksOfShelf(content.shelf.id);
+      await getShelves();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const createShelf = async (payload) => {
     try {
       await axiosInstance.post(SHELVES_API_ENDPOINT, payload);
-      getBooks();
       getShelves();
     } catch (error) {
       handleError(error);
@@ -78,28 +103,30 @@ const BookCtx = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getBooks = async () => {
+  const getUnShelvedBooks = async () => {
     try {
       const { data } = await axiosInstance.get(UN_SHELVED_BOOKS_API_ENDPOINT);
-
-      setBooks(data);
+      setUnShelvedBooks(data);
+      // setBooks(data);
     } catch (error) {
       handleError(error);
     }
   };
 
   useEffect(() => {
-    getBooks();
+    getUnShelvedBooks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getBooksOfShelf = async (id) => {
+    if (!id) return;
+
     try {
       const { data } = await axiosInstance.get(
         BOOK_API_ENDPOINT + "?shelf=" + id
       );
 
-      return data;
+      setBooks(data);
     } catch (error) {
       handleError(error);
     }
@@ -109,9 +136,24 @@ const BookCtx = ({ children }) => {
     try {
       await axiosInstance.post(PAGE_API_ENDPOINT, payload);
 
-      getAllNotes(payload.book_id);
+      getPagesOfBook(payload.book_id);
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const deleteNote = async (id, bookId) => {
+    setShowOverlayLoading(true);
+
+    try {
+      await axiosInstance.delete(PAGE_API_ENDPOINT + "?id=" + id);
+
+      getPagesOfBook(bookId);
+      getShelves();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setShowOverlayLoading(false);
     }
   };
 
@@ -146,17 +188,25 @@ const BookCtx = ({ children }) => {
         createNote,
         getAllNotes,
         deleteBook,
+        deleteNote,
         getBooksOfShelf,
+        getPagesOfBook,
+        updateBook,
+        pages,
+        setPages,
+        selectedPage,
         allNotes,
+        unShelvedBooks,
         shelves,
         setAllNotes,
         selectedNote,
         updateNote,
-        getBooks,
+        getUnShelvedBooks,
         contentOnMainPage,
         SetContentOnMainPage,
         showOverlayLoading,
         setShowOverlayLoading,
+        setSelectedPage,
       }}
     >
       {children}
