@@ -8,13 +8,17 @@ import { useBookCtx } from "../../Contexts/BookCtx";
 import Books from "../Books/Books";
 import CreateShelf from "../Shelf/CreateShelf";
 import Shelf from "../Shelf/Shelf";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
-  const { books, shelves, SetContentOnMainPage } = useBookCtx();
+  const { unShelvedBooks, shelves } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
+  const navigate = useNavigate();
 
-  const setWhatToLoadOnMainPage = (id, type) => {
-    SetContentOnMainPage({ id, type });
+  const onClickHandler = (book) => {
+    const link = `/book/${book.title}/${book.id}`;
+
+    navigate(link);
   };
 
   return (
@@ -96,7 +100,6 @@ const Sidebar = () => {
             {shelves &&
               shelves.map((shelf) => (
                 <Shelf
-                  onClick={setWhatToLoadOnMainPage}
                   shelf_data={shelf}
                   selectedBook={selectedBook}
                   setSelectedBook={setSelectedBook}
@@ -111,21 +114,14 @@ const Sidebar = () => {
               <span>Unshelved Books</span>
             </div>
             <div className="pl-4 space-y-1">
-              {books &&
-                books.map((book) => (
-                  <Books
-                    onClick={() => {
-                      setWhatToLoadOnMainPage({
-                        config: book,
-                        type: "unShelvedBook",
-                      });
-                      setSelectedBook({ id: book.id, name: book.title });
-                    }}
-                    key={book.id}
-                    bookData={book}
-                    selectedBook={selectedBook}
-                  />
-                ))}
+              {unShelvedBooks.map((book) => (
+                <Books
+                  onClick={() => onClickHandler(book)}
+                  key={book.id}
+                  bookData={book}
+                  selectedBook={selectedBook}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import NavbarNew from "../Header/NavbarNew";
 import BooksOfShelf from "./BooksOfShelf";
 import { useParams } from "react-router-dom";
 import PagesOfBook from "./PagesOfBook";
+import ShelfLoader from "../Loader/ShelfLoader";
 
 export const MAIN_CONTENT_TYPE = {
   SHELF: 0,
@@ -16,6 +17,7 @@ const MainContent = () => {
   const [card, setCard] = useState([]); //eslint-disable-line
   const [page, setPage] = useState(null); //eslint-disable-line
   const [navAddress, setNavAddress] = useState([]);
+  const { showOverlayLoading } = useBookCtx();
 
   const {
     parentType,
@@ -103,20 +105,6 @@ const MainContent = () => {
     //eslint-disable-next-line
   }, [contentOnMainPage]);
 
-  // const onClickHandler = (clickedData, type, shelf) => {
-  //   if (type === "page") {
-  //     setPage(clickedData); // Set the active page
-  //   } else {
-  //     SetContentOnMainPage({ config: clickedData, type, shelf });
-  //   }
-  // };
-
-  // const onSaveHandler = (type, value) => {
-  //   const updatedPage = { ...page, [type]: value };
-  //   setPage(updatedPage);
-  //   updateNote(updatedPage);
-  // };
-
   const type = child1Type || parentType;
   const id = child1Id || parentId;
 
@@ -154,7 +142,9 @@ const MainContent = () => {
     <div className="relative z-10 flex-1 flex flex-col">
       <NavbarNew navAddress={navAddress} />
 
-      <div className="h-full p-6 overflow-auto">{body}</div>
+      <div className="h-full overflow-auto">{body}</div>
+
+      {showOverlayLoading && <ShelfLoader />}
     </div>
   );
 };

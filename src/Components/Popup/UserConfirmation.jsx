@@ -6,7 +6,7 @@ const UserConfirmation = ({ cancelDelete, confirmDelete, message }) => {
   return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <p className="mb-4">{message}</p>
+        <p dangerouslySetInnerHTML={{ __html: message }} className="mb-4"></p>
         <div className="flex justify-end gap-2 z-40">
           <button
             onClick={cancelDelete}
@@ -22,8 +22,8 @@ const UserConfirmation = ({ cancelDelete, confirmDelete, message }) => {
           </button>
         </div>
       </div>
-      </div>,
-      
+    </div>,
+
     document.getElementById("root") // Portal target
   );
 };
