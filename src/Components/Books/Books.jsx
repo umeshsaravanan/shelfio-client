@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBook } from "react-icons/fa";
 
 import InlinePopup from "../Popup/InlinePopup";
@@ -20,15 +20,19 @@ const INLINE_POPUP_OPTIONS = [
 const Books = ({ bookData, onClick, selectedBook }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [isrename, setisrename] = useState(false);
-  const [dataTitle, setdataTitle] = useState(bookData.title);
+  const [dataTitle, setDataTitle] = useState(bookData.title);
 
   const { axiosInstance, handleError } = useAxios();
   const { getBooks, setShowOverlayLoading } = useBookCtx();
   const { ref } = useOutsideClick(() => setOpenMenu(false));
 
+  useEffect(() => {
+    setDataTitle(bookData.title);
+  }, [bookData.title]);
+
   const titleOutSideClickHandler = () => {
     setisrename(false);
-    setdataTitle(bookData.title);
+    setDataTitle(bookData.title);
   };
 
   const { ref: ref1 } = useOutsideClick(titleOutSideClickHandler);
@@ -39,7 +43,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
   };
 
   const handleInputChange = (e) => {
-    setdataTitle(e.target.value);
+    setDataTitle(e.target.value);
   };
 
   const handleKeyPress = async (e) => {
@@ -54,7 +58,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
       } catch (error) {
         console.error("Error updating book title:", error);
         handleError(error);
-        setdataTitle(bookData.title);
+        setDataTitle(bookData.title);
       } finally {
         setisrename(false);
       }
@@ -92,7 +96,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
       onClick={onClick}
       className={
         "w-full cursor-pointer flex items-center text-left px-2 py-1.5 text-sm text-gray-700 rounded-lg " +
-        (selectedBook?.id === bookData.id || openMenu
+        (selectedBook?.id === bookData.id
           ? " text-indigo-600 bg-indigo-50  "
           : " hover:bg-gray-50")
       }

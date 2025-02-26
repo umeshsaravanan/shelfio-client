@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Books from "../Books/Books";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { name, books } = shelf_data;
   const navigate = useNavigate();
+  const { parentId, parentType } = useParams();
 
   const chevronOnclickHandler = (e) => {
     e.stopPropagation();
@@ -23,11 +24,31 @@ const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
     navigate(link);
   };
 
+  let shelfId;
+
+  if (parentType === "shelf") {
+    shelfId = parentId;
+  }
+
+  useEffect(() => {
+    if (shelf_data?.id === shelfId) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+
+    //eslint-disable-next-line
+  }, [shelfId]);
+
   return (
     <div className="mb-3">
       <button
         onClick={() => onClickHandler(shelf_data)}
-        className="w-full flex items-center text-left px-2 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        className={`w-full flex items-center text-left px-2 py-2 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition-colors ${
+          shelf_data?.id === shelfId
+            ? " text-indigo-600 bg-indigo-50  "
+            : " hover:bg-gray-50"
+        }`}
       >
         <div onClick={chevronOnclickHandler}>
           {isOpen ? (
@@ -48,6 +69,7 @@ const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
           {books.length
             ? books.map((book) => (
                 <Books
+                  key={book.id}
                   selectedBook={selectedBook}
                   bookData={book}
                   onClick={() => {

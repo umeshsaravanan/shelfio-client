@@ -11,6 +11,7 @@ const Card = ({
   isActive,
   onDelete,
   onEdit, // Add onEdit prop
+  isEdit = true,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -104,15 +105,16 @@ const Card = ({
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
-                {/* Edit Option */}
-                <button
-                  onClick={handleEdit}
-                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
-                >
-                  <FaEdit className="mr-2" />
-                  Edit
-                </button>
+                {isEdit ? (
+                  <button
+                    onClick={handleEdit}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                  >
+                    <FaEdit className="mr-2" />
+                    Edit
+                  </button>
+                ) : null}
 
                 {/* Delete Option */}
                 <button

@@ -7,7 +7,12 @@ import Dropdown from "../Dropdown/Dropdown";
 import { icons } from "../Icons/ShelfIcons";
 import BtnLoader from "../Loader/BtnLoader";
 
-const CreateBook = ({ prefillData, shelf, onClose = () => {} }) => {
+const CreateBook = ({
+  prefillData,
+  shelf,
+  onClose = () => {},
+  isTextBtn = false,
+}) => {
   const [showPopup, setShowPopup] = useState(prefillData ? true : false);
   const [bookData, setBookData] = useState(
     prefillData || {
@@ -82,17 +87,33 @@ const CreateBook = ({ prefillData, shelf, onClose = () => {} }) => {
     onClose();
   };
 
+  let btn;
+
+  if (isTextBtn) {
+    btn = (
+      <button
+        onClick={() => setShowPopup(true)}
+        className="flex items-center gap-2 px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+      >
+        <FaPlus size={16} />
+        <span>New Book</span>
+      </button>
+    );
+  } else {
+    btn = (
+      <button
+        onClick={() => setShowPopup(true)}
+        className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg transition-colors mb-6 shadow-md hover:shadow-lg"
+      >
+        <FaPlus size={18} />
+        <span className="font-medium">New Book</span>
+      </button>
+    );
+  }
+
   return (
     <div className="relative flex w-full">
-      {!prefillData && (
-        <button
-          onClick={() => setShowPopup(true)}
-          className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg transition-colors mb-6 shadow-md hover:shadow-lg"
-        >
-          <FaPlus size={18} />
-          <span className="font-medium">New Book</span>
-        </button>
-      )}
+      {!prefillData && btn}
 
       <Popup
         heading="Create Book"

@@ -46,7 +46,6 @@ const BooksOfShelf = ({ shelfId }) => {
                 title={book.title}
                 description={book.description}
                 updatedTime={book.updated_at}
-                // isActive={page?.id === eachCard.allData.id}
                 onClick={() => onClickHandler(book)}
                 onDelete={() => deleteBook(book.id, shelfId)}
                 onEdit={() => setEditBook(book)}

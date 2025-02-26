@@ -127,6 +127,7 @@ const PagesOfBook = ({ bookId }) => {
                     onClick={() => onClickOnCard(page, i)}
                     isActive={page?.id === selectedPage?.id} // Highlight active page
                     onDelete={() => deleteNote(page.id, bookId)}
+                    isEdit={false}
                   />
                 ))}
               </div>

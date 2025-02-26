@@ -1,5 +1,5 @@
 // Sidebar.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBook, FaSearch } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 
@@ -8,18 +8,27 @@ import { useBookCtx } from "../../Contexts/BookCtx";
 import Books from "../Books/Books";
 import CreateShelf from "../Shelf/CreateShelf";
 import Shelf from "../Shelf/Shelf";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Sidebar = () => {
   const { unShelvedBooks, shelves } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
   const navigate = useNavigate();
+  const { parentType, parentId, child1Id } = useParams();
 
   const onClickHandler = (book) => {
     const link = `/book/${book.title}/${book.id}`;
 
     navigate(link);
   };
+
+  useEffect(() => {
+    if (parentType === "shelf") {
+      setSelectedBook({ id: child1Id });
+    } else if (parentType === "book") {
+      setSelectedBook({ id: parentId });
+    }
+  }, [parentType, child1Id, parentId]);
 
   return (
     <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
@@ -100,6 +109,7 @@ const Sidebar = () => {
             {shelves &&
               shelves.map((shelf) => (
                 <Shelf
+                  key={shelf.id}
                   shelf_data={shelf}
                   selectedBook={selectedBook}
                   setSelectedBook={setSelectedBook}
