@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { FaFileAlt } from "react-icons/fa";
+
 import { useBookCtx } from "../../Contexts/BookCtx";
 import NavbarNew from "../Header/NavbarNew";
-import Card from "../Card/Card";
-import CreateNote from "../Notes/CreateNote";
-import EditorWrapper from "../Editor/EditorWrapper";
+import BooksOfShelf from "./BooksOfShelf";
+import { useParams } from "react-router-dom";
+import PagesOfBook from "./PagesOfBook";
+import ShelfLoader from "../Loader/ShelfLoader";
+
+export const MAIN_CONTENT_TYPE = {
+  SHELF: 0,
+  BOOK: 1,
+};
 
 const MainContent = () => {
+  const { contentOnMainPage, getBooksOfShelf, getAllNotes } = useBookCtx();
+  const [card, setCard] = useState([]); //eslint-disable-line
+  const [page, setPage] = useState(null); //eslint-disable-line
+  const [navAddress, setNavAddress] = useState([]);
+  const { showOverlayLoading } = useBookCtx();
+
   const {
-    contentOnMainPage,
-    SetContentOnMainPage,
-    getBooksOfShelf,
-    getAllNotes,
-    updateNote,
-    allNotes,
-  } = useBookCtx();
-  const [card, setCard] = useState([]);
-  const [page, setPage] = useState(null); // Track the active page
+    parentType,
+    parentName,
+    parentId,
+    child1Type,
+    child1Name,
+    child1Id,
+    child2Name,
+  } = useParams();
 
   let navigationLinks = [];
 
@@ -52,15 +63,11 @@ const MainContent = () => {
     setCard(cardData);
   };
 
-  const getPagesOfBook = async (id) => {
-    await getAllNotes(id);
-  };
-
-  useEffect(() => {
+  const updateCard = (pages) => {
     let cardData = [];
 
-    if (allNotes && allNotes.length) {
-      allNotes.forEach((book) => {
+    if (pages && pages.length) {
+      pages.forEach((book) => {
         cardData.push({
           title: book?.title,
           description: book?.description,
@@ -71,13 +78,17 @@ const MainContent = () => {
         });
       });
 
-      const selectedPage = allNotes?.[0];
+      const selectedPage = pages?.[0];
 
       setPage(selectedPage);
-
-      setCard(cardData);
     }
-  }, [allNotes]);
+
+    setCard(cardData);
+  };
+
+  const getPagesOfBook = async (id) => {
+    await getAllNotes(id, updateCard);
+  };
 
   useEffect(() => {
     if (contentOnMainPage) {
@@ -94,110 +105,46 @@ const MainContent = () => {
     //eslint-disable-next-line
   }, [contentOnMainPage]);
 
-  const onClickHandler = (clickedData, type, shelf) => {
-    if (type === "page") {
-      setPage(clickedData); // Set the active page
-    } else {
-      SetContentOnMainPage({ config: clickedData, type, shelf });
-    }
-  };
-
-  const onSaveHandler = (type, value) => {
-    const updatedPage = { ...page, [type]: value };
-    setPage(updatedPage);
-    updateNote(updatedPage);
-  };
+  const type = child1Type || parentType;
+  const id = child1Id || parentId;
 
   let body;
 
-  if (contentOnMainPage?.type === "book") {
-    // Single-row layout with editor
-    body = (
-      <div key={"tab2"} className="h-full flex transition-all duration-300">
-        {/* Pages List (Left Side) */}
-        <div className="w-1/4  p-4 overflow-y-auto border-r border-gray-200">
-          <div className="flex flex-col space-y-4">
-            {card.map((eachCard, i) => (
-              <Card
-                key={eachCard.title + i}
-                title={eachCard.title}
-                description={eachCard.description}
-                updatedTime={eachCard.updatedDate}
-                onClick={() =>
-                  onClickHandler(
-                    eachCard.allData,
-                    eachCard.type,
-                    eachCard.shelf
-                  )
-                }
-                isActive={page?.id === eachCard.allData.id} // Highlight active page
-              />
-            ))}
-          </div>
-        </div>
+  switch (type) {
+    case "shelf":
+      body = <BooksOfShelf shelfId={id} />;
+      break;
 
-        {/* Editor (Right Side) */}
-        <div className="w-3/4 p-6">
-          <EditorWrapper
-            initialContent={page?.content}
-            initialTitle={page?.title}
-            onSave={onSaveHandler}
-          />
-        </div>
-      </div>
-    );
-  } else {
-    // Grid layout
-    body = (
-      <div key={"tab1 "}>
-        {contentOnMainPage && card?.length ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {card.map((eachCard, i) => (
-              <Card
-                key={eachCard.title + i}
-                title={eachCard.title}
-                description={eachCard.description}
-                updatedTime={eachCard.updatedDate}
-                isActive={page?.id === eachCard.allData.id}
-                onClick={() =>
-                  onClickHandler(
-                    eachCard.allData,
-                    eachCard.type,
-                    eachCard.shelf
-                  )
-                }
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="max-w-md space-y-4 p-6 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm text-center">
-              <FaFileAlt size={64} className="text-indigo-500 mx-auto" />
-              <h3 className="text-2xl font-semibold text-gray-800">
-                No Pages Yet
-              </h3>
-              <p className="text-sm text-gray-600">
-                Start by creating your first page. Organize your notes, ideas,
-                and thoughts in one place.
-              </p>
+    case "book":
+      body = <PagesOfBook bookId={id} />;
+      break;
 
-              <CreateNote
-                bookId={contentOnMainPage?.config?.id}
-                shelf={contentOnMainPage?.shelf}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    );
+    default:
+      body = null;
+      break;
   }
+
+  useEffect(() => {
+    let link = [parentName];
+
+    if (child1Name) {
+      link.push(child1Name);
+    }
+
+    if (child2Name) {
+      link.push(child2Name);
+    }
+
+    setNavAddress(link);
+  }, [parentName, child1Name, child2Name]);
 
   return (
     <div className="relative z-10 flex-1 flex flex-col">
-      <NavbarNew navAddress={navigationLinks} />
+      <NavbarNew navAddress={navAddress} />
 
-      {/* Content Area */}
-      <div className=" p-6 overflow-auto">{body}</div>
+      <div className="h-full overflow-auto">{body}</div>
+
+      {showOverlayLoading && <ShelfLoader />}
     </div>
   );
 };

@@ -5,17 +5,19 @@ import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import Dropdown from "../Dropdown/Dropdown";
 import { icons } from "../Icons/ShelfIcons";
+import BtnLoader from "../Loader/BtnLoader";
 
-const CreateBook = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [bookData, setBookData] = useState({
-    title: "",
-    shelf: { id: "", name: "", icon: "" },
-    description: "",
-  });
+const CreateBook = ({ prefillData, shelf, onClose = () => {} }) => {
+  const [showPopup, setShowPopup] = useState(prefillData ? true : false);
+  const [bookData, setBookData] = useState(
+    prefillData || {
+      title: "",
+      shelf: shelf || { id: "", name: "", icon: "" },
+      description: "",
+    }
+  );
   const [isLoading, setIsLoading] = useState(false);
-
-  const { createBook, shelves } = useBookCtx();
+  const { createBook, shelves, updateBook } = useBookCtx();
 
   const handleChange = (e) => {
     setBookData({
@@ -25,7 +27,6 @@ const CreateBook = () => {
   };
 
   const onDropdownChange = (selectedOption) => {
-    console.log({ selectedOption });
     setBookData({
       ...bookData,
       shelf: {
@@ -36,15 +37,20 @@ const CreateBook = () => {
     });
   };
 
-  const createBtnHandler = async () => {
+  const btnHandler = async () => {
     if (!bookData.title.trim()) return;
 
     setIsLoading(true);
 
-    await createBook({ ...bookData });
+    if (prefillData) {
+      await updateBook(bookData);
+    } else {
+      await createBook({ ...bookData });
+    }
 
     setIsLoading(false);
     setShowPopup(false);
+    onClose();
     setBookData({ title: "", shelf: "", description: "" });
   };
 
@@ -71,15 +77,22 @@ const CreateBook = () => {
     return options;
   };
 
+  const onCloseHandler = () => {
+    setShowPopup(false);
+    onClose();
+  };
+
   return (
     <div className="relative flex w-full">
-      <button
-        onClick={() => setShowPopup(true)}
-        className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg transition-colors mb-6 shadow-md hover:shadow-lg"
-      >
-        <FaPlus size={18} />
-        <span className="font-medium">New Book</span>
-      </button>
+      {!prefillData && (
+        <button
+          onClick={() => setShowPopup(true)}
+          className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg transition-colors mb-6 shadow-md hover:shadow-lg"
+        >
+          <FaPlus size={18} />
+          <span className="font-medium">New Book</span>
+        </button>
+      )}
 
       <Popup
         heading="Create Book"
@@ -91,7 +104,9 @@ const CreateBook = () => {
           <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6">
             <div className="flex items-center gap-2">
               <FaBook className="w-6 h-6 text-white" />
-              <h2 className="text-2xl font-bold text-white">Create New Book</h2>
+              <h2 className="text-2xl font-bold text-white">
+                {prefillData ? "Update Book" : "Create New Book"}
+              </h2>
             </div>
           </div>
 
@@ -110,6 +125,7 @@ const CreateBook = () => {
                 id="title"
                 name="title"
                 type="text"
+                autoFocus
                 placeholder="Enter a meaningful title for your book"
                 className="w-full h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={bookData.title}
@@ -160,22 +176,21 @@ const CreateBook = () => {
           {/* Footer */}
           <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-2">
             <button
-              onClick={() => setShowPopup(false)}
+              onClick={onCloseHandler}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
-              onClick={createBtnHandler}
+              onClick={btnHandler}
               disabled={!bookData.title.trim() || isLoading}
-              className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg ${
+              className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg min-w-32 ${
                 !bookData.title.trim()
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-indigo-700"
               }`}
             >
-              <FaPlus className="w-4 h-4 inline-block mr-2" />
-              Create Book
+              {isLoading ? <BtnLoader /> : getBtnText(prefillData)}
             </button>
           </div>
         </>
@@ -185,3 +200,18 @@ const CreateBook = () => {
 };
 
 export default CreateBook;
+
+const getBtnText = (prefillData) => {
+  let btnContent = (
+    <>
+      <FaPlus className="w-4 h-4 inline-block mr-2" />
+      Create Book
+    </>
+  );
+
+  if (prefillData) {
+    btnContent = "Update Book";
+  }
+
+  return btnContent;
+};

@@ -1,9 +1,23 @@
 import React from "react";
 import { FaPlus, FaCog, FaChevronRight } from "react-icons/fa";
 import { useAuthCtx } from "../../Contexts/AuthCtx";
+import CreateNote from "../Notes/CreateNote";
+import { useParams } from "react-router-dom";
 
 const NavbarNew = ({ navAddress = [] }) => {
   const { logoutHandler } = useAuthCtx();
+  const { parentType, parentName, parentId, child1Id } = useParams();
+
+  let bookId;
+  let shelfId;
+
+  if (parentType === "shelf") {
+    shelfId = parentId;
+    bookId = child1Id;
+  } else {
+    bookId = parentId;
+  }
+
   return (
     <div className="h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center gap-2 cursor-default">
@@ -28,10 +42,11 @@ const NavbarNew = ({ navAddress = [] }) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="flex items-center gap-2 px-3 py-1.5 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
-          <FaPlus size={16} />
-          <span>New Page</span>
-        </button>
+        {bookId && (
+          <>
+            <CreateNote bookId={bookId} shelfId={shelfId} isTextBtn={true} />
+          </>
+        )}
 
         <button className="p-2 hover:bg-gray-100 rounded-lg">
           <FaCog size={20} className="text-gray-600" />
