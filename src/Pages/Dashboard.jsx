@@ -2,6 +2,7 @@ import React from "react";
 
 import Sidebar from "../Components/Sidebar/Sidebar";
 import MainContent from "../Components/MainContent/MainContent";
+import { ToastContainer } from "react-toastify";
 
 const Dashboard = () => {
   return (
@@ -17,6 +18,8 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <MainContent />
+
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

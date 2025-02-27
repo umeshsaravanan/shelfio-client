@@ -1,17 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
 import moment from "moment";
-import { FaBook, FaEllipsisV, FaTrash, FaEdit } from "react-icons/fa"; // Import FaEdit
+import {
+  FaBook,
+  FaEllipsisV,
+  FaTrash,
+  FaEdit,
+  FaFileAlt,
+} from "react-icons/fa"; // Import FaEdit
 import UserConfirmation from "../Popup/UserConfirmation";
 
 const Card = ({
   title,
   updatedTime,
   description,
+  extraText = "",
   onClick,
   isActive,
   onDelete,
   onEdit, // Add onEdit prop
-  isEdit = true,
+  isEdit: isBook = true,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -69,12 +76,20 @@ const Card = ({
 
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-start gap-2">
-          <FaBook
-            size={16}
-            className={`${
-              isActive ? "text-indigo-800" : "text-indigo-600"
-            } shrink-0 mt-1`}
-          />
+          {isBook ? (
+            <FaBook
+              size={16}
+              className={`${
+                isActive ? "text-indigo-800" : "text-indigo-600"
+              } shrink-0 mt-1`}
+            />
+          ) : (
+            <FaFileAlt
+              className={`${
+                isActive ? "text-indigo-800" : "text-indigo-600"
+              } shrink-0 mt-1`}
+            />
+          )}
           <div className="flex-1">
             <h3
               className={`font-medium line-clamp-1 ${
@@ -109,7 +124,7 @@ const Card = ({
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
-                {isEdit ? (
+                {isBook ? (
                   <button
                     onClick={handleEdit}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -137,7 +152,7 @@ const Card = ({
           )}
         </div>
       </div>
-
+      {extraText && <p className="text-sm text-gray-600 mb-4">{extraText}</p>}
       <p className="text-sm text-gray-600 mb-4">{`updated at ${dateTime}`}</p>
       <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
 
