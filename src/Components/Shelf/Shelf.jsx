@@ -58,7 +58,7 @@ const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
           )}
         </div>
 
-        <span className="flex-1">{name}</span>
+        <span className="flex-1 line-clamp-1">{name}</span>
         <span className="text-xs text-gray-500">
           {shelf_data.books.length + " books"}
         </span>

@@ -40,8 +40,8 @@ const NavbarNew = ({ navAddress = [] }) => {
             <span
               className={
                 navAddress.length === i + 1
-                  ? "text-lg font-semibold text-gray-800"
-                  : "text-sm text-gray-500"
+                  ? "text-lg font-semibold text-gray-800 max-w-56 line-clamp-1"
+                  : "text-sm text-gray-500  max-w-56 line-clamp-1"
               }
             >
               {address}
@@ -56,14 +56,16 @@ const NavbarNew = ({ navAddress = [] }) => {
       </div>
 
       <div className="flex items-center gap-3 ">
+        <p className="text-gray-600">{booksCount}</p>
+
         {bookId && (
           <>
             <CreateNote bookId={bookId} shelfId={shelfId} isTextBtn={true} />
           </>
         )}
 
-        <div className="w-fit">
-          {selectedShelfDetails && !bookId && (
+        {selectedShelfDetails && !bookId && (
+          <div className="w-fit">
             <CreateBook
               shelf={{
                 id: shelfId,
@@ -72,10 +74,8 @@ const NavbarNew = ({ navAddress = [] }) => {
               }}
               isTextBtn={true}
             />
-          )}
-        </div>
-
-        <p className="text-gray-600">{booksCount}</p>
+          </div>
+        )}
 
         <button className="p-2 hover:bg-gray-100 rounded-lg">
           <FaCog size={20} className="text-gray-600" />

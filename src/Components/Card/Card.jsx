@@ -15,7 +15,7 @@ const Card = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const dateTime = updatedTime ? moment(updatedTime).fromNow() : undefined;
+  const dateTime = updatedTime ? moment.utc(updatedTime).fromNow() : undefined;
   const menuRef = useRef(null);
 
   const handleDelete = () => {
@@ -68,18 +68,22 @@ const Card = ({
       )}
 
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <FaBook
             size={16}
-            className={`${isActive ? "text-indigo-800" : "text-indigo-600"}`}
+            className={`${
+              isActive ? "text-indigo-800" : "text-indigo-600"
+            } shrink-0 mt-1`}
           />
-          <h3
-            className={`font-medium ${
-              isActive ? "text-indigo-900" : "text-gray-800"
-            } mb-2`}
-          >
-            {title}
-          </h3>
+          <div className="flex-1">
+            <h3
+              className={`font-medium line-clamp-1 ${
+                isActive ? "text-indigo-900" : "text-gray-800"
+              } mb-2`}
+            >
+              {title}
+            </h3>
+          </div>
         </div>
 
         {/* Kebab Menu */}

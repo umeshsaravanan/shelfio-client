@@ -13,9 +13,6 @@ export const MAIN_CONTENT_TYPE = {
 };
 
 const MainContent = () => {
-  const { contentOnMainPage, getBooksOfShelf, getAllNotes } = useBookCtx();
-  const [card, setCard] = useState([]); //eslint-disable-line
-  const [page, setPage] = useState(null); //eslint-disable-line
   const [navAddress, setNavAddress] = useState([]);
   const { showOverlayLoading } = useBookCtx();
 
@@ -28,82 +25,6 @@ const MainContent = () => {
     child1Id,
     child2Name,
   } = useParams();
-
-  let navigationLinks = [];
-
-  if (contentOnMainPage) {
-    if (contentOnMainPage.type === "shelf" && contentOnMainPage.config.name) {
-      navigationLinks = [contentOnMainPage.config.name];
-    } else if (contentOnMainPage.type === "book") {
-      navigationLinks.push(contentOnMainPage.shelf.name);
-      navigationLinks.push(contentOnMainPage.config.title);
-    } else if (contentOnMainPage.type === "unShelvedBook") {
-      navigationLinks.push(contentOnMainPage.config.title);
-    }
-  }
-
-  const getBooks = async (id) => {
-    const data = await getBooksOfShelf(id);
-
-    let cardData = [];
-
-    if (data && data.length) {
-      data.forEach((book) => {
-        cardData.push({
-          title: book?.title,
-          description: book?.description,
-          updatedDate: book.updated_at,
-          allData: book,
-          type: "book",
-          shelf: book?.shelf,
-        });
-      });
-    }
-
-    setCard(cardData);
-  };
-
-  const updateCard = (pages) => {
-    let cardData = [];
-
-    if (pages && pages.length) {
-      pages.forEach((book) => {
-        cardData.push({
-          title: book?.title,
-          description: book?.description,
-          updatedDate: book.updated_at,
-          allData: book,
-          type: "page",
-          shelf: book?.shelf,
-        });
-      });
-
-      const selectedPage = pages?.[0];
-
-      setPage(selectedPage);
-    }
-
-    setCard(cardData);
-  };
-
-  const getPagesOfBook = async (id) => {
-    await getAllNotes(id, updateCard);
-  };
-
-  useEffect(() => {
-    if (contentOnMainPage) {
-      if (contentOnMainPage.type === "shelf") {
-        getBooks(contentOnMainPage.config.id);
-      } else {
-        getPagesOfBook(contentOnMainPage.config.id);
-      }
-    }
-
-    // Reset active page when contentOnMainPage changes
-    setPage(null);
-
-    //eslint-disable-next-line
-  }, [contentOnMainPage]);
 
   const type = child1Type || parentType;
   const id = child1Id || parentId;

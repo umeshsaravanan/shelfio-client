@@ -95,7 +95,7 @@ const Sidebar = () => {
         <CreateBook />
 
         {/* Books List */}
-        <div className="space-y-4">
+        <div className="space-y-4 h-[64vh] overflow-auto">
           {/* Shelved Books */}
           <div className="mb-6">
             <div className="flex items-center justify-between px-2 mb-3">

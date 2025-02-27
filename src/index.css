@@ -4,6 +4,27 @@
 
 input:-webkit-autofill {
   background-color: transparent !important;
-  box-shadow: 0 0 0px 1000px #F6F4FA inset !important;
-  -webkit-box-shadow: 0 0 0px 1000px #F6F4FA inset !important;
+  box-shadow: 0 0 0px 1000px #f6f4fa inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #f6f4fa inset !important;
+}
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 5px; /* Adjust the width of the scrollbar */
+}
+
+/* Optional: Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+}
+
+/* Optional: Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #d1d5db; /* Color of the thumb */
+  border-radius: 4px; /* Rounded corners for the thumb */
+}
+
+/* Optional: Style the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker color on hover */
 }

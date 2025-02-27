@@ -102,7 +102,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
       }
     >
       <div className="flex items-center space-x-2">
-        <FaBook size={16} className="mr-2" />
+        <FaBook size={16} className="mr-2 shrink-0" />
         {isrename ? (
           <input
             type="text"
@@ -112,7 +112,7 @@ const Books = ({ bookData, onClick, selectedBook }) => {
             ref={ref1}
           />
         ) : (
-          <span>{dataTitle}</span>
+          <span className="line-clamp-1">{dataTitle}</span>
         )}
       </div>
 

@@ -37,7 +37,7 @@ const BooksOfShelf = ({ shelfId }) => {
     body = <ShelfLoader />;
   } else if (books) {
     body = (
-      <div className="flex flex-col h-full p-6 ">
+      <div className="flex flex-col h-full p-4 ">
         {books && books.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {books.map((book, i) => (
