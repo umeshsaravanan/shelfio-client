@@ -114,7 +114,7 @@ const PagesOfBook = ({ bookId }) => {
         {pages && pages.length ? (
           <div className="h-full flex transition-all duration-300">
             {/* Pages List (Left Side) */}
-            <div className="w-1/4  p-6 overflow-y-auto border-r border-gray-200">
+            <div className="w-1/4  p-4 overflow-y-auto border-r border-gray-200">
               <div className="flex flex-col space-y-4">
                 {pages.map((page, i) => (
                   <Card
@@ -132,7 +132,7 @@ const PagesOfBook = ({ bookId }) => {
             </div>
 
             {/* Editor (Right Side) */}
-            <div className="w-3/4 p-6">
+            <div className="w-3/4 p-4">
               <EditorWrapper
                 initialContent={selectedPage?.page?.content}
                 initialTitle={selectedPage?.page?.title}
