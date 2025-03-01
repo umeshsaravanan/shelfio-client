@@ -8,21 +8,34 @@ import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import { shelfICons } from "../Icons/ShelfIcons";
 
-const CreateShelf = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [shelfData, setShelfData] = useState({
-    name: "",
-    icon: "",
-    description: "",
-  });
+const CreateShelf = ({ prefillShelf, onClose }) => {
+  const [isOpen, setIsOpen] = useState(prefillShelf ? true : false);
+  const [shelfData, setShelfData] = useState(
+    prefillShelf || {
+      name: "",
+      icon: "",
+      description: "",
+    }
+  );
 
-  const { createShelf } = useBookCtx();
+  const { createShelf, updateShelf } = useBookCtx();
 
   const handleCreateShelf = () => {
     createShelf({ ...shelfData });
 
     setIsOpen(false);
     setShelfData({ name: "", icon: "", description: "" });
+  };
+
+  const handleUpdateShelf = () => {
+    updateShelf({ ...shelfData });
+    onClose();
+    setIsOpen(false);
+  };
+
+  const onCancelHandler = () => {
+    setIsOpen(false);
+    onClose();
   };
 
   return (
@@ -114,11 +127,14 @@ const CreateShelf = () => {
               >
                 <RiFileTextLine className="w-4 h-4 text-indigo-500" />
                 Description
+                <span className="text-gray-500 font-normal">
+                  {"(Optional)"}
+                </span>
               </label>
               <input
                 id="description"
                 type="text"
-                placeholder="Add a brief description of this shelf's purpose (Optional)"
+                placeholder="Add a brief description of this shelf's purpose"
                 className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={shelfData.description}
                 onChange={(e) =>
@@ -131,13 +147,13 @@ const CreateShelf = () => {
           {/* Footer */}
           <div className="px-6 py-4 bg-gray-50 border-t rounded-b-lg flex justify-end gap-2">
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={onCancelHandler}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
-              onClick={handleCreateShelf}
+              onClick={prefillShelf ? handleUpdateShelf : handleCreateShelf}
               disabled={!shelfData.name.trim()}
               className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg ${
                 !shelfData.name.trim()
@@ -145,8 +161,10 @@ const CreateShelf = () => {
                   : "hover:bg-indigo-700"
               }`}
             >
-              <FaPlus className="w-4 h-4 inline-block mr-2" />
-              Create Shelf
+              {!prefillShelf ? (
+                <FaPlus className="w-4 h-4 inline-block mr-2" />
+              ) : null}
+              {prefillShelf ? "Update Shelf" : "  Create Shelf"}
             </button>
           </div>
         </>
