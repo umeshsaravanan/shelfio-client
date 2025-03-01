@@ -1,33 +1,58 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { FaCog, FaChevronRight } from "react-icons/fa";
+
 import { useAuthCtx } from "../../Contexts/AuthCtx";
 import CreateNote from "../Notes/CreateNote";
-import { useParams } from "react-router-dom";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import CreateBook from "../Books/CreateBook";
 
-const NavbarNew = ({ navAddress = [] }) => {
+const getPluralOrSingular = (word, length) => {
+  let convertedWord;
+
+  if (length === 1) {
+    convertedWord = word;
+  } else {
+    convertedWord = word + "s";
+  }
+
+  return convertedWord;
+};
+
+const NavbarNew = ({ navAddress = [], noLineClamp = false }) => {
   const { logoutHandler } = useAuthCtx();
   const { books, pages, shelves } = useBookCtx();
-  const { parentType, parentId, child1Type, child1Id } = useParams();
+  const { parentType, parentId, parentName, child1Type, child1Id, child1Name } =
+    useParams();
 
   let bookId;
   let shelfId;
+  let shelfName;
+  let bookName;
   let booksCount;
 
   if (child1Type === "book") {
-    booksCount = pages?.length ? pages.length + " pages" : "";
+    booksCount = pages?.length
+      ? pages.length + getPluralOrSingular(" page", pages.length)
+      : "";
   } else if (parentType === "book") {
-    booksCount = pages?.length ? pages.length + " books" : "";
+    booksCount = pages?.length
+      ? pages.length + getPluralOrSingular(" page", pages.length)
+      : "";
   } else if (parentType === "shelf") {
-    booksCount = books?.length ? books.length + " books" : "";
+    booksCount = books?.length
+      ? books.length + getPluralOrSingular(" book", books.length)
+      : "";
   }
 
   if (parentType === "shelf") {
     shelfId = parentId;
     bookId = child1Id;
+    shelfName = parentName;
+    bookName = child1Name;
   } else {
     bookId = parentId;
+    bookName = parentName;
   }
 
   const selectedShelfDetails = shelves?.find((shelf) => shelf.id === shelfId);
@@ -39,9 +64,10 @@ const NavbarNew = ({ navAddress = [] }) => {
           <React.Fragment key={address + i}>
             <span
               className={
-                navAddress.length === i + 1
-                  ? "text-lg font-semibold text-gray-800 max-w-56 line-clamp-1"
-                  : "text-sm text-gray-500  max-w-56 line-clamp-1"
+                (navAddress.length === i + 1
+                  ? "text-lg font-semibold text-gray-800  "
+                  : "text-sm text-gray-500") +
+                (noLineClamp ? " " : " line-clamp-1  max-w-56")
               }
             >
               {address}
@@ -60,7 +86,13 @@ const NavbarNew = ({ navAddress = [] }) => {
 
         {bookId && (
           <>
-            <CreateNote bookId={bookId} shelfId={shelfId} isTextBtn={true} />
+            <CreateNote
+              shelfName={shelfName}
+              bookName={bookName}
+              bookId={bookId}
+              shelfId={shelfId}
+              isTextBtn={true}
+            />
           </>
         )}
 

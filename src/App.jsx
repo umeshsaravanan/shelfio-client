@@ -15,6 +15,7 @@ const App = () => {
           path="/:parentType/:parentName/:parentId/:child1Type?/:child1Name?/:child1Id?/:child2Type?/:child2Name?/:child2Id?"
           element={<Dashboard />}
         />
+        <Route path="/search" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="*" element={<div>No such page Exist</div>} />

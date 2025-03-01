@@ -13,7 +13,7 @@ const useAxios = () => {
 
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 20000,
+    timeout: 30000,
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/json",

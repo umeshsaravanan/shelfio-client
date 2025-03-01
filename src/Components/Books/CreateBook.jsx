@@ -161,10 +161,11 @@ const CreateBook = ({
                 className="text-sm font-medium flex items-center gap-2"
               >
                 <GiBookshelf className="w-4 h-4 text-indigo-500" />
-                Select Shelf
+                Select Shelf{" "}
+                <span className="text-gray-500">{"(Optional)"}</span>
               </label>
               <Dropdown
-                defaultText="Choose a shelf (Optional)"
+                defaultText="Choose a shelf"
                 options={getShelfDropdownOptions(shelves)}
                 handleChange={onDropdownChange}
                 value={{

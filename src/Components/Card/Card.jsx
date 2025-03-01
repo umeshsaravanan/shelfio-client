@@ -19,6 +19,7 @@ const Card = ({
   onDelete,
   onEdit, // Add onEdit prop
   isEdit: isBook = true,
+  showBookIcon = false,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -65,18 +66,20 @@ const Card = ({
   return (
     <div
       onClick={onClick}
-      className={`relative group bg-white/95 backdrop-blur-sm rounded-lg border border-gray-200 p-4 hover:shadow-lg transition-shadow cursor-pointer ${
-        isActive ? "border-indigo-600 shadow-lg" : "hover:border-indigo-300"
+      className={`relative group bg-white/95 backdrop-blur-sm rounded-lg outline  p-4 hover:shadow-lg transition-shadow cursor-pointer ${
+        isActive
+          ? "outline-blue-600 shadow-lg"
+          : "hover:outline-blue-600 outline-transparent shadow-lg"
       }`}
     >
       {/* Transparent Overlay */}
       {isActive && (
-        <div className="absolute inset-0 bg-black/10 rounded-lg pointer-events-none" />
+        <div className="absolute inset-0 bg-black/5 rounded-lg pointer-events-none" />
       )}
 
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-start gap-2">
-          {isBook ? (
+          {isBook || showBookIcon ? (
             <FaBook
               size={16}
               className={`${
@@ -152,9 +155,11 @@ const Card = ({
           )}
         </div>
       </div>
-      {extraText && <p className="text-sm text-gray-600 mb-4">{extraText}</p>}
-      <p className="text-sm text-gray-600 mb-4">{`updated at ${dateTime}`}</p>
-      <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
+      {extraText && <p className="text-sm text-gray-600 mb-2">{extraText}</p>}
+      <p className="text-sm text-gray-600 line-clamp-3 mb-2">
+        {htmlToPlainText(description)}
+      </p>
+      <p className="text-xs  text-gray-600">{`updated ${dateTime}`}</p>
 
       {/* Confirmation Dialog */}
       {isConfirmOpen && (
@@ -169,3 +174,20 @@ const Card = ({
 };
 
 export default Card;
+function htmlToPlainText(html) {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+
+  // Replace <br> and block elements with new lines
+  tempDiv.querySelectorAll("br").forEach((br) => (br.outerHTML = "\n"));
+  tempDiv
+    .querySelectorAll("p, div, li, h1, h2, h3, h4, h5, h6")
+    .forEach((el) => {
+      el.outerHTML = el.innerHTML + "\n";
+    });
+
+  return tempDiv.textContent
+    ?.replace(/\n\s*\n/g, "\n") // Remove extra blank lines
+    ?.replace(/\s+/g, " ") // Normalize spaces
+    ?.trim();
+}
