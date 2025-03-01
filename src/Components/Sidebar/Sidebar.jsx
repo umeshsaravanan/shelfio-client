@@ -79,7 +79,7 @@ const Sidebar = () => {
               className="fill-current opacity-50"
             />
           </svg>
-          <h1 className="text-xl font-bold text-gray-800">shelfbook.io</h1>
+          <h1 className="text-xl font-bold text-gray-800">Shelfbook.io</h1>
         </div>
 
         {/* Search */}
