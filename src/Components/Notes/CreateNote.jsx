@@ -15,7 +15,6 @@ const CreateNote = ({
   const createBtnHandler = async () => {
     setShowOverlayLoading(true);
 
-    debugger;
     const payload = {
       title: "",
       book: { id: bookId, name: bookName },
