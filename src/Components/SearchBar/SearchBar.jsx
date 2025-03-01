@@ -29,8 +29,10 @@ const SearchBar = () => {
     navigate("/");
   };
 
+  console.log({ currentQuery, query });
+
   useEffect(() => {
-    setQuery(currentQuery);
+    setQuery(currentQuery || "");
   }, [currentQuery]);
 
   return (
