@@ -59,7 +59,10 @@ const BookCtx = ({ children }) => {
     try {
       await axiosInstance.delete(BOOK_API_ENDPOINT + "?id=" + id);
 
-      getBooksOfShelf(shelfId);
+      if (shelfId) {
+        getBooksOfShelf(shelfId);
+      }
+
       getUnShelvedBooks();
       getShelves();
     } catch (error) {
@@ -136,7 +139,7 @@ const BookCtx = ({ children }) => {
     try {
       await axiosInstance.post(PAGE_API_ENDPOINT, payload);
 
-      getPagesOfBook(payload.book_id);
+      getPagesOfBook(payload.book.id);
     } catch (error) {
       handleError(error);
     }

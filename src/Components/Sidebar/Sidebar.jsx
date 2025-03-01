@@ -1,6 +1,5 @@
-// Sidebar.js
 import React, { useEffect, useState } from "react";
-import { FaBook, FaSearch } from "react-icons/fa";
+import { FaBook } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 
 import CreateBook from "../Books/CreateBook";
@@ -9,6 +8,7 @@ import Books from "../Books/Books";
 import CreateShelf from "../Shelf/CreateShelf";
 import Shelf from "../Shelf/Shelf";
 import { useNavigate, useParams } from "react-router-dom";
+import SearchBar from "../SearchBar/SearchBar";
 
 const Sidebar = () => {
   const { unShelvedBooks, shelves } = useBookCtx();
@@ -79,18 +79,11 @@ const Sidebar = () => {
               className="fill-current opacity-50"
             />
           </svg>
-          <h1 className="text-xl font-bold text-gray-800">shelf.io</h1>
+          <h1 className="text-xl font-bold text-gray-800">shelfbook.io</h1>
         </div>
 
         {/* Search */}
-        <div className="relative mb-6">
-          <FaSearch className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search books and pages..."
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-          />
-        </div>
+        <SearchBar />
 
         <CreateBook />
 

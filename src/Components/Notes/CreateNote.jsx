@@ -3,16 +3,24 @@ import { FaPlus } from "react-icons/fa";
 
 import { useBookCtx } from "../../Contexts/BookCtx";
 
-const CreateNote = ({ bookId, shelfId, isTextBtn = false }) => {
+const CreateNote = ({
+  bookId,
+  bookName,
+  shelfId,
+  shelfName,
+  isTextBtn = false,
+}) => {
   const { createNote, setShowOverlayLoading } = useBookCtx();
 
   const createBtnHandler = async () => {
     setShowOverlayLoading(true);
+
+    debugger;
     const payload = {
       title: "",
-      book_id: bookId,
+      book: { id: bookId, name: bookName },
       content: "",
-      shelfId: shelfId,
+      shelf: { id: shelfId, name: shelfName },
     };
 
     await createNote(payload);

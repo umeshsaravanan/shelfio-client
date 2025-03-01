@@ -102,7 +102,27 @@ const PagesOfBook = ({ bookId }) => {
     setPages(pagesCopy);
   };
 
-  const shelfId = parentType === "shelf" ? parentId : "";
+  let shelfId;
+  let shelfName;
+  if (parentType === "shelf") {
+    shelfId = parentId;
+    shelfName = parentName;
+  }
+
+  let bookName;
+  let pageId;
+
+  if (child1Type === "book") {
+    bookName = child1Name;
+    pageId = child2Id;
+  } else if (parentType === "book") {
+    bookName = parentName;
+    pageId = child1Id;
+  }
+
+  if (!pageId && pages && pages.length) {
+    pageId = pages[0].id;
+  }
 
   let body;
 
@@ -120,10 +140,10 @@ const PagesOfBook = ({ bookId }) => {
                   <Card
                     key={page.id}
                     title={page.title}
-                    description={page.description}
+                    description={page.content}
                     updatedTime={page.updated_at}
                     onClick={() => onClickOnCard(page, i)}
-                    isActive={page?.id === selectedPage?.id} // Highlight active page
+                    isActive={page?.id === pageId} // Highlight active page
                     onDelete={() => deleteNote(page.id, bookId)}
                     isEdit={false}
                   />
@@ -154,7 +174,12 @@ const PagesOfBook = ({ bookId }) => {
                 and thoughts in one place.
               </p>
 
-              <CreateNote bookId={bookId} shelfId={shelfId} />
+              <CreateNote
+                shelfName={shelfName}
+                bookId={bookId}
+                shelfId={shelfId}
+                bookName={bookName}
+              />
             </div>
           </div>
         )}
