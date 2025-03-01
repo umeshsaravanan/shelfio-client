@@ -13,8 +13,8 @@ export const validateSignup = (signupData, setValidationErrors) => {
 
   if (!signupData.password.trim()) {
     errors.password = "Password is required";
-  } else if (signupData.password.length < 6) {
-    errors.password = "Password must be at least 6 characters";
+  } else if (signupData.password.length < 8) {
+    errors.password = "Password must be at least 8 characters";
   }
 
   setValidationErrors(errors);

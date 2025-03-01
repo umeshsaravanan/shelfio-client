@@ -34,7 +34,10 @@ const Sidebar = () => {
     <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
       <div className="p-6">
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
+        <div
+          onClick={() => navigate("/")}
+          className="flex items-center gap-2 mb-8 cursor-pointer"
+        >
           <svg viewBox="0 0 100 100" className="w-8 h-8 text-indigo-600">
             <rect
               x="10"
@@ -79,7 +82,7 @@ const Sidebar = () => {
               className="fill-current opacity-50"
             />
           </svg>
-          <h1 className="text-xl font-bold text-gray-800">shelfbook.io</h1>
+          <h1 className="text-xl font-bold text-gray-800">Shelfbook.io</h1>
         </div>
 
         {/* Search */}

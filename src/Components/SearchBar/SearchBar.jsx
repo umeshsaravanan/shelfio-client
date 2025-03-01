@@ -30,7 +30,7 @@ const SearchBar = () => {
   };
 
   useEffect(() => {
-    setQuery(currentQuery);
+    setQuery(currentQuery || "");
   }, [currentQuery]);
 
   return (

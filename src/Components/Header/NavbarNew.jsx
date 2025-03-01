@@ -1,11 +1,12 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { FaCog, FaChevronRight } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 import { useAuthCtx } from "../../Contexts/AuthCtx";
 import CreateNote from "../Notes/CreateNote";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import CreateBook from "../Books/CreateBook";
+import Settings from "../Setting/Settings";
 
 const getPluralOrSingular = (word, length) => {
   let convertedWord;
@@ -58,7 +59,7 @@ const NavbarNew = ({ navAddress = [], noLineClamp = false }) => {
   const selectedShelfDetails = shelves?.find((shelf) => shelf.id === shelfId);
 
   return (
-    <div className="h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6">
+    <div className="z-20 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6">
       <div className="flex items-center gap-2 cursor-default">
         {navAddress.map((address, i) => (
           <React.Fragment key={address + i}>
@@ -109,9 +110,7 @@ const NavbarNew = ({ navAddress = [], noLineClamp = false }) => {
           </div>
         )}
 
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <FaCog size={20} className="text-gray-600" />
-        </button>
+        <Settings />
 
         <button
           onClick={logoutHandler}

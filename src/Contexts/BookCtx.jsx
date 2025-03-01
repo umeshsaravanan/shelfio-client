@@ -101,6 +101,32 @@ const BookCtx = ({ children }) => {
     }
   };
 
+  const updateShelf = async (content) => {
+    setShowOverlayLoading(true);
+    try {
+      await axiosInstance.put(SHELVES_API_ENDPOINT, content);
+      await getShelves();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setShowOverlayLoading(false);
+    }
+  };
+
+  const deleteShelf = async (id) => {
+    setShowOverlayLoading(true);
+
+    try {
+      await axiosInstance.delete(SHELVES_API_ENDPOINT + "?id=" + id);
+      getUnShelvedBooks();
+      getShelves();
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setShowOverlayLoading(false);
+    }
+  };
+
   useEffect(() => {
     getShelves();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,9 +218,11 @@ const BookCtx = ({ children }) => {
         getAllNotes,
         deleteBook,
         deleteNote,
+        deleteShelf,
         getBooksOfShelf,
         getPagesOfBook,
         updateBook,
+        updateShelf,
         pages,
         setPages,
         selectedPage,
