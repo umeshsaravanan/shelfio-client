@@ -6,6 +6,7 @@ import Login from "./Pages/Login";
 import ForgotPassword from "./Pages/ForgotPassword";
 import AllContexts from "./Contexts/AllContexts";
 import ResetPassword from "./Pages/ResetPassword";
+import PageNotFound from "./Pages/PageNotFound";
 
 const App = () => {
   return (
@@ -20,7 +21,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="*" element={<div>No such page Exist</div>} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AllContexts>
   );
