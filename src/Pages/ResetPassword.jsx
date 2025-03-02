@@ -52,9 +52,9 @@ const ResetPassword = () => {
       });
 
       setMessage("Password reset successful!");
-      handleToken(data.token);
 
       setTimeout(() => {
+        handleToken(data.token);
         navigate(DASHBOARD_ROUTE_POINT);
       }, 500);
     } catch (error) {

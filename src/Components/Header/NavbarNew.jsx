@@ -110,7 +110,7 @@ const NavbarNew = ({ navAddress = [], noLineClamp = false }) => {
           </div>
         )}
 
-        <Settings />
+        {parentId && <Settings />}
 
         <button
           onClick={logoutHandler}

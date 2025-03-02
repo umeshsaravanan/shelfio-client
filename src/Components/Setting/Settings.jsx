@@ -3,13 +3,15 @@ import { FaCog, FaEdit, FaTrash } from "react-icons/fa";
 import CreateShelf from "../Shelf/CreateShelf";
 import { useParams } from "react-router-dom";
 import { useBookCtx } from "../../Contexts/BookCtx";
+import CreateBook from "../Books/CreateBook";
 
 const Settings = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [editBook, setEditBook] = useState();
+  const [isBook, setIsBook] = useState(false);
 
-  const { parentType, parentId, child1Type } = useParams();
-  const { shelves, deleteShelf } = useBookCtx();
+  const { parentType, parentId, child1Type, child1Id } = useParams();
+  const { shelves, deleteShelf, books, unShelvedBooks } = useBookCtx();
 
   const menuRef = useRef(null);
 
@@ -32,8 +34,26 @@ const Settings = () => {
     // Handle edit action
 
     if (child1Type === "book" || parentType === "book") {
+      setIsBook(true);
+
+      let bookId;
+      if (child1Type === "book") {
+        bookId = child1Id;
+      } else {
+        bookId = parentId;
+      }
+
+      const selectedBook = [...(books || []), ...(unShelvedBooks || [])]?.find(
+        (book) => book.id === bookId
+      );
+
+      if (!selectedBook) return;
+
+      setEditBook(selectedBook);
     } else if (parentType === "shelf") {
+      setIsBook(false);
       const shelf = shelves?.find((shelf) => shelf.id === parentId);
+      if (!shelf) return;
 
       setEditBook({
         id: shelf.id,
@@ -52,6 +72,24 @@ const Settings = () => {
     }
     setIsMenuOpen(false);
   };
+
+  let popup = null;
+
+  if (editBook && isBook) {
+    popup = (
+      <CreateBook
+        prefillData={editBook}
+        onClose={() => setEditBook(undefined)}
+      />
+    );
+  } else if (editBook) {
+    popup = (
+      <CreateShelf
+        prefillShelf={editBook}
+        onClose={() => setEditBook(undefined)}
+      />
+    );
+  }
 
   return (
     <div className="relative" ref={menuRef}>
@@ -99,12 +137,7 @@ const Settings = () => {
         </div>
       )}
 
-      {editBook && (
-        <CreateShelf
-          prefillShelf={editBook}
-          onClose={() => setEditBook(undefined)}
-        />
-      )}
+      {popup}
     </div>
   );
 };
