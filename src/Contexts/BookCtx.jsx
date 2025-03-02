@@ -135,6 +135,7 @@ const BookCtx = ({ children }) => {
       await axiosInstance.delete(SHELVES_API_ENDPOINT + "?id=" + id);
       getUnShelvedBooks();
       getShelves();
+      getBooksOfShelf(id);
     } catch (error) {
       handleError(error);
     } finally {
