@@ -30,6 +30,16 @@ const Settings = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (child1Type === "book" || parentType === "book") {
+      setIsBook(true);
+    } else {
+      setIsBook(false);
+    }
+
+    //eslint-disable-next-line
+  }, [child1Type, parentType]);
+
   const handleEdit = () => {
     // Handle edit action
 
@@ -118,7 +128,7 @@ const Settings = () => {
               role="menuitem"
             >
               <FaEdit className="mr-2" />
-              Edit
+              {isBook ? "Edit Book" : "Edit Shelf"}
             </button>
 
             {/* Delete Option */}
@@ -131,7 +141,7 @@ const Settings = () => {
               role="menuitem"
             >
               <FaTrash className="mr-2" />
-              Delete
+              {isBook ? "Delete Book" : "Delete Shelf"}
             </button>
           </div>
         </div>
