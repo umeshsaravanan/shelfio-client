@@ -13,6 +13,7 @@ import {
   SHELVES_API_ENDPOINT,
   UN_SHELVED_BOOKS_API_ENDPOINT,
 } from "../Config/BoookApiEndpoints";
+import { useNavigate } from "react-router-dom";
 import { useAuthCtx } from "./AuthCtx";
 
 const BookCtxApi = createContext();
@@ -31,6 +32,7 @@ const BookCtx = ({ children }) => {
 
   const selectedNote = useRef();
   const { axiosInstance, handleError } = useAxios();
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuthCtx();
 
   const getPagesOfBook = async (id) => {
@@ -92,11 +94,17 @@ const BookCtx = ({ children }) => {
     }
   };
 
-  const getShelves = async () => {
+  const getShelves = async (isInitialCall) => {
     try {
       const { data } = await axiosInstance.get(SHELVES_API_ENDPOINT);
 
       setShelves(data);
+
+      if (isInitialCall && data && data.length) {
+        const firstShelf = data[0];
+
+        navigate(`/shelf/${firstShelf.name}/${firstShelf.id}`);
+      }
     } catch (error) {
       handleError(error);
     }
