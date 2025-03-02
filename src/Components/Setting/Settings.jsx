@@ -4,14 +4,17 @@ import CreateShelf from "../Shelf/CreateShelf";
 import { useParams } from "react-router-dom";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import CreateBook from "../Books/CreateBook";
+import UserConfirmation from "../Popup/UserConfirmation";
 
 const Settings = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [editBook, setEditBook] = useState();
   const [isBook, setIsBook] = useState(false);
+  const [showconfirmation, setShowConfirmation] = useState(false);
 
   const { parentType, parentId, child1Type, child1Id } = useParams();
-  const { shelves, deleteShelf, books, unShelvedBooks } = useBookCtx();
+  const { shelves, deleteShelf, books, unShelvedBooks, deleteBook } =
+    useBookCtx();
 
   const menuRef = useRef(null);
 
@@ -77,10 +80,20 @@ const Settings = () => {
   };
 
   const handleDelete = () => {
-    if (parentType === "shelf") {
+    if (isBook) {
+      const bookId = parentType === "shelf" ? child1Id : parentId;
+      const shelfId = parentType === "shelf" ? parentId : undefined;
+
+      deleteBook(bookId, shelfId);
+    } else if (parentType === "shelf") {
       deleteShelf(parentId);
     }
     setIsMenuOpen(false);
+    setShowConfirmation(false);
+  };
+
+  const handleDeletePopupClick = () => {
+    setShowConfirmation(true);
   };
 
   let popup = null;
@@ -135,7 +148,7 @@ const Settings = () => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete();
+                handleDeletePopupClick();
               }}
               className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
               role="menuitem"
@@ -148,6 +161,14 @@ const Settings = () => {
       )}
 
       {popup}
+
+      {showconfirmation && (
+        <UserConfirmation
+          message="Are you sure you want to delete?"
+          cancelDelete={() => setShowConfirmation(false)}
+          confirmDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };
