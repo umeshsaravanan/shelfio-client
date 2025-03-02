@@ -64,3 +64,7 @@
   overflow-x: auto;
   white-space: pre-wrap;
 } */
+
+:root {
+  --jd-color-panel: #fff;
+}

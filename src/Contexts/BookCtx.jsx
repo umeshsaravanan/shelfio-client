@@ -13,7 +13,8 @@ import {
   SHELVES_API_ENDPOINT,
   UN_SHELVED_BOOKS_API_ENDPOINT,
 } from "../Config/BoookApiEndpoints";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthCtx } from "./AuthCtx";
 
 const BookCtxApi = createContext();
 
@@ -30,9 +31,10 @@ const BookCtx = ({ children }) => {
   const [selectedPage, setSelectedPage] = useState();
 
   const selectedNote = useRef();
-
   const { axiosInstance, handleError } = useAxios();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthCtx();
+  const { parentType, shelfId } = useParams();
 
   const getPagesOfBook = async (id) => {
     try {
@@ -79,6 +81,7 @@ const BookCtx = ({ children }) => {
       await axiosInstance.put(BOOK_API_ENDPOINT, content);
       await getBooksOfShelf(content.shelf.id);
       await getShelves();
+      await getUnShelvedBooks();
     } catch (error) {
       handleError(error);
     }
@@ -99,10 +102,14 @@ const BookCtx = ({ children }) => {
 
       setShelves(data);
 
-      if (isInitialCall && data && data.length) {
+      if (isInitialCall && data && data.length && !parentType) {
         const firstShelf = data[0];
 
         navigate(`/shelf/${firstShelf.name}/${firstShelf.id}`);
+      }
+
+      if (parentType === "shelf") {
+        getBooksOfShelf(shelfId);
       }
     } catch (error) {
       handleError(error);
@@ -136,9 +143,12 @@ const BookCtx = ({ children }) => {
   };
 
   useEffect(() => {
-    getShelves(true);
+    if (isAuthenticated) {
+      getShelves(true);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   const getUnShelvedBooks = async () => {
     try {
@@ -151,9 +161,12 @@ const BookCtx = ({ children }) => {
   };
 
   useEffect(() => {
-    getUnShelvedBooks();
+    if (isAuthenticated) {
+      getUnShelvedBooks();
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   const getBooksOfShelf = async (id) => {
     if (!id) return;

@@ -37,7 +37,8 @@ const Editor = ({ existingContent, callback }) => {
       autofocus: true,
       spellcheck: true,
       toolbarButtonSize: "small",
-      defaultActionOnPaste: "insert_as_text",
+      askBeforePasteHTML: false,
+      askBeforePasteFromWord: false,
       uploader: {
         insertImageAsBase64URI: true,
       },

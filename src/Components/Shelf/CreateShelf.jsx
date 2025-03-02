@@ -40,13 +40,15 @@ const CreateShelf = ({ prefillShelf, onClose }) => {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-1"
-      >
-        <FaPlus className="w-3 h-3" />
-        New Shelf
-      </button>
+      {!prefillShelf ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="text-xs text-indigo-600 hover:text-indigo-700 hover:underline flex items-center gap-1"
+        >
+          <FaPlus className="w-3 h-3" />
+          New Shelf
+        </button>
+      ) : null}
 
       <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <>
@@ -55,12 +57,14 @@ const CreateShelf = ({ prefillShelf, onClose }) => {
             <div className="flex items-center gap-2">
               <GiBookshelf className="w-6 h-6 text-white" />
               <h2 className="text-2xl font-bold text-white">
-                Create New Shelf
+                {prefillShelf ? "Update Shelf" : "Create New Shelf"}
               </h2>
             </div>
-            <p className="text-indigo-50 mt-2">
-              Create a new shelf to organize your books and notes.
-            </p>
+            {!prefillShelf && (
+              <p className="text-indigo-50 mt-2">
+                Create a new shelf to organize your books and notes.
+              </p>
+            )}
           </div>
 
           {/* Body */}
