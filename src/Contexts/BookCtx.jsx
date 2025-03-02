@@ -13,6 +13,7 @@ import {
   SHELVES_API_ENDPOINT,
   UN_SHELVED_BOOKS_API_ENDPOINT,
 } from "../Config/BoookApiEndpoints";
+import { useAuthCtx } from "./AuthCtx";
 
 const BookCtxApi = createContext();
 
@@ -29,8 +30,8 @@ const BookCtx = ({ children }) => {
   const [selectedPage, setSelectedPage] = useState();
 
   const selectedNote = useRef();
-
   const { axiosInstance, handleError } = useAxios();
+  const { isAuthenticated } = useAuthCtx();
 
   const getPagesOfBook = async (id) => {
     try {
@@ -128,9 +129,12 @@ const BookCtx = ({ children }) => {
   };
 
   useEffect(() => {
-    getShelves();
+    if (isAuthenticated) {
+      getShelves();
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   const getUnShelvedBooks = async () => {
     try {
@@ -143,9 +147,12 @@ const BookCtx = ({ children }) => {
   };
 
   useEffect(() => {
-    getUnShelvedBooks();
+    if (isAuthenticated) {
+      getUnShelvedBooks();
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   const getBooksOfShelf = async (id) => {
     if (!id) return;
