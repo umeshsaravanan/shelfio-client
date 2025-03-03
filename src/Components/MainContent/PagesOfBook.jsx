@@ -34,22 +34,6 @@ const PagesOfBook = ({ bookId }) => {
     child2Id,
   } = useParams();
 
-  useEffect(() => {
-    if (selectedPage && selectedPage.page) {
-      const { page } = selectedPage;
-      const link =
-        "/" +
-        generatePath(page.shelf, page.book, {
-          id: page.id,
-          name: page.title,
-        });
-
-      navigate(link);
-    }
-
-    //eslint-disable-next-line
-  }, [selectedPage?.page?.id]);
-
   const getPages = async (isNavigate) => {
     setIsLoading(true);
     await getPagesOfBook(bookId, isNavigate);
@@ -78,6 +62,19 @@ const PagesOfBook = ({ bookId }) => {
 
     if (selectedPageIndex !== -1) {
       setSelectedPage(pages[selectedPageIndex]);
+
+      const page = pages[selectedPageIndex];
+
+      if (page) {
+        const link =
+          "/" +
+          generatePath(page?.shelf, page?.book, {
+            id: page?.id,
+            name: page?.title,
+          });
+
+        navigate(link);
+      }
     }
 
     //eslint-disable-next-line
