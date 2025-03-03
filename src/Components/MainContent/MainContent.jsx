@@ -18,8 +18,19 @@ const MainContent = () => {
 
   const { parentType, parentId, child1Type, child1Id, child2Id } = useParams();
 
-  const type = child1Type || parentType;
-  const id = child1Id || parentId;
+  let type;
+  let id;
+
+  if (child1Type === "book") {
+    id = child1Id;
+    type = "book";
+  } else if (parentType === "shelf") {
+    id = parentId;
+    type = "shelf";
+  } else if (parentType === "book") {
+    id = parentId;
+    type = "book";
+  }
 
   let body;
 

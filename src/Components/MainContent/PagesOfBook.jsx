@@ -7,6 +7,7 @@ import { useBookCtx } from "../../Contexts/BookCtx";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
 import CreateNote from "../Notes/CreateNote";
+import { generatePath } from "../../Util/GeneratePath";
 
 const PagesOfBook = ({ bookId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,14 +34,30 @@ const PagesOfBook = ({ bookId }) => {
     child2Id,
   } = useParams();
 
-  const getPages = async () => {
+  useEffect(() => {
+    if (selectedPage && selectedPage.page) {
+      const { page } = selectedPage;
+      const link =
+        "/" +
+        generatePath(page.shelf, page.book, {
+          id: page.id,
+          name: page.title,
+        });
+
+      navigate(link);
+    }
+
+    //eslint-disable-next-line
+  }, [selectedPage?.page?.id]);
+
+  const getPages = async (isNavigate) => {
     setIsLoading(true);
-    await getPagesOfBook(bookId);
+    await getPagesOfBook(bookId, isNavigate);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    getPages();
+    getPages(true);
 
     //eslint-disable-next-line
   }, [bookId]);
@@ -143,7 +160,7 @@ const PagesOfBook = ({ bookId }) => {
                     description={page.content}
                     updatedTime={page.updated_at}
                     onClick={() => onClickOnCard(page, i)}
-                    isActive={page?.id === pageId} // Highlight active page
+                    isActive={page?.id === selectedPage.page.id} // Highlight active page
                     onDelete={() => deleteNote(page.id, bookId)}
                     isEdit={false}
                   />

@@ -13,8 +13,7 @@ const Settings = () => {
   const [showconfirmation, setShowConfirmation] = useState(false);
 
   const { parentType, parentId, child1Type, child1Id } = useParams();
-  const { shelves, deleteShelf, books, unShelvedBooks, deleteBook } =
-    useBookCtx();
+  const { shelves, deleteShelf, unShelvedBooks, deleteBook } = useBookCtx();
 
   const menuRef = useRef(null);
 
@@ -43,24 +42,38 @@ const Settings = () => {
     //eslint-disable-next-line
   }, [child1Type, parentType]);
 
+  let type;
+  let bookid;
+  let shelfid;
+
+  if (child1Type === "book") {
+    bookid = child1Id;
+    shelfid = parentId;
+    type = "book";
+  } else if (parentType === "shelf") {
+    bookid = child1Id;
+    shelfid = parentId;
+    type = "shelf";
+  } else if (parentType === "book") {
+    bookid = parentId;
+    type = "book";
+  }
+
   const handleEdit = () => {
     // Handle edit action
 
-    if (child1Type === "book" || parentType === "book") {
+    if (type === "book") {
       setIsBook(true);
 
-      let bookId;
-      if (child1Type === "book") {
-        bookId = child1Id;
+      let selectedBook;
+
+      if (shelfid) {
+        const shelf = shelves.find((shelf) => shelf.id === shelfid);
+
+        selectedBook = shelf?.books?.find((book) => book.id === bookid);
       } else {
-        bookId = parentId;
+        selectedBook = unShelvedBooks.find((book) => book.id === bookid);
       }
-
-      const selectedBook = [...(books || []), ...(unShelvedBooks || [])]?.find(
-        (book) => book.id === bookId
-      );
-
-      if (!selectedBook) return;
 
       setEditBook(selectedBook);
     } else if (parentType === "shelf") {
@@ -80,13 +93,10 @@ const Settings = () => {
   };
 
   const handleDelete = () => {
-    if (isBook) {
-      const bookId = parentType === "shelf" ? child1Id : parentId;
-      const shelfId = parentType === "shelf" ? parentId : undefined;
-
-      deleteBook(bookId, shelfId);
-    } else if (parentType === "shelf") {
-      deleteShelf(parentId);
+    if (type === "book") {
+      deleteBook(bookid, shelfid);
+    } else if (type === "shelf") {
+      deleteShelf(shelfid);
     }
     setIsMenuOpen(false);
     setShowConfirmation(false);
@@ -98,9 +108,10 @@ const Settings = () => {
 
   let popup = null;
 
-  if (editBook && isBook) {
+  if (editBook && type === "book") {
     popup = (
       <CreateBook
+        key="book"
         prefillData={editBook}
         onClose={() => setEditBook(undefined)}
       />
@@ -108,6 +119,7 @@ const Settings = () => {
   } else if (editBook) {
     popup = (
       <CreateShelf
+        key="shelf"
         prefillShelf={editBook}
         onClose={() => setEditBook(undefined)}
       />

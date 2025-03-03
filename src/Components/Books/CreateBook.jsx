@@ -115,11 +115,7 @@ const CreateBook = ({
     <div className="relative flex w-full">
       {!prefillData && btn}
 
-      <Popup
-        heading="Create Book"
-        isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
-      >
+      <Popup heading="Create Book" isOpen={showPopup} onClose={onCloseHandler}>
         <>
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6">

@@ -68,6 +68,7 @@ const BookCtx = ({ children }) => {
       }
 
       getUnShelvedBooks();
+      getPagesOfBook(id);
       getShelves();
     } catch (error) {
       handleError(error);
