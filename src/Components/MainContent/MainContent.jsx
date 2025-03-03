@@ -14,17 +14,9 @@ export const MAIN_CONTENT_TYPE = {
 
 const MainContent = () => {
   const [navAddress, setNavAddress] = useState([]);
-  const { showOverlayLoading } = useBookCtx();
+  const { showOverlayLoading, pages, shelves, unShelvedBooks } = useBookCtx();
 
-  const {
-    parentType,
-    parentName,
-    parentId,
-    child1Type,
-    child1Name,
-    child1Id,
-    child2Name,
-  } = useParams();
+  const { parentType, parentId, child1Type, child1Id, child2Id } = useParams();
 
   const type = child1Type || parentType;
   const id = child1Id || parentId;
@@ -46,18 +38,38 @@ const MainContent = () => {
   }
 
   useEffect(() => {
-    let link = [parentName];
+    const link = [];
 
-    if (child1Name) {
-      link.push(child1Name);
-    }
+    const findItemById = (items, id) => items?.find((item) => item.id === id);
 
-    if (child2Name) {
-      link.push(child2Name);
+    if (parentType === "shelf") {
+      const shelf = findItemById(shelves, parentId);
+      if (shelf) {
+        link.push(shelf.name);
+        const book = findItemById(shelf.books, child1Id);
+        if (book) link.push(book.title);
+
+        const page = findItemById(pages, child2Id);
+        if (page) link.push(page.title);
+      }
+    } else if (parentType === "book") {
+      const book = findItemById(unShelvedBooks, parentId);
+      if (book) link.push(book.title);
+
+      const page = findItemById(pages, child1Id);
+      if (page) link.push(page.title);
     }
 
     setNavAddress(link);
-  }, [parentName, child1Name, child2Name]);
+  }, [
+    parentType,
+    parentId,
+    child1Id,
+    child2Id,
+    pages,
+    shelves,
+    unShelvedBooks,
+  ]);
 
   return (
     <div className="relative z-10 flex-1 flex flex-col">
