@@ -43,7 +43,7 @@ const Editor = ({ existingContent, callback }) => {
         insertImageAsBase64URI: true,
       },
       buttons:
-        "bold,italic,underline,strikethrough,eraser,ul,ol,font,fontsize,paragraph,lineHeight,superscript,subscript,classSpan,image,spellcheck,cut,copy,paste",
+        "bold,italic,underline,strikethrough,eraser,ul,ol,font,fontsize,paragraph,lineHeight,superscript,subscript,classSpan,image,spellcheck,cut,copy,paste,checkbox", // Add 'checkbox' to the buttons list
       style: {
         // Customize the editor's appearance
         fontFamily: "Inter, sans-serif", // Match your app's font
@@ -75,6 +75,14 @@ const Editor = ({ existingContent, callback }) => {
           },
         },
         // Add more button customizations as needed
+        checkbox: {
+          icon: "checkbox", // You can use a custom icon or an existing one
+          tooltip: "Insert Checkbox",
+          exec: (editor) => {
+            // Insert a checkbox HTML element
+            editor.s.insertHTML('<input type="checkbox" />');
+          },
+        },
       },
       theme: "default", // Use the default theme for consistency
     };
