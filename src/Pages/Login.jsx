@@ -84,7 +84,7 @@ export default function Login() {
                     className="fill-current opacity-50"
                   />
                 </svg>
-                <h1 className="text-3xl font-bold mt-4">Shelfbook.io</h1>
+                <h1 className="text-3xl font-bold mt-4">Shelfbook</h1>
               </div>
               <h2 className="text-2xl font-light mb-6">Welcome Back!</h2>
               <p className="text-lg opacity-90">
