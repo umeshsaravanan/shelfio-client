@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GiBookshelf } from "react-icons/gi";
-import { FaBook, FaFileAlt, FaPlus } from "react-icons/fa";
+import { FaBook, FaPlus } from "react-icons/fa";
 import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import Dropdown from "../Dropdown/Dropdown";
@@ -17,8 +17,7 @@ const CreateBook = ({
   const [bookData, setBookData] = useState(
     prefillData || {
       title: "",
-      shelf: shelf || { id: "", name: "", icon: "" },
-      description: "",
+      shelf: shelf || { id: "", name: "", icon: "" }
     }
   );
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +55,7 @@ const CreateBook = ({
     setIsLoading(false);
     setShowPopup(false);
     onClose();
-    setBookData({ title: "", shelf: "", description: "" });
+    setBookData({ title: "", shelf: ""});
   };
 
   const getSelfIcons = (shelfIcon) => {
@@ -169,25 +168,6 @@ const CreateBook = ({
                   icon: getSelfIcons(bookData?.shelf?.icon),
                 }}
               />
-            </div>
-
-            {/* Description Input */}
-            <div className="space-y-2">
-              <label
-                htmlFor="description"
-                className="text-sm font-medium flex items-center gap-2"
-              >
-                <FaFileAlt className="w-4 h-4 text-indigo-500" />
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Add a brief description of your book's content (Optional)"
-                className="w-full h-24 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={bookData.description}
-                onChange={handleChange}
-              ></textarea>
             </div>
           </div>
 

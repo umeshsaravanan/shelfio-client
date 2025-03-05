@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { RiFileTextLine } from "react-icons/ri";
 import { GiBookshelf } from "react-icons/gi";
 import { MdOutlineInsertEmoticon } from "react-icons/md";
 
@@ -8,13 +7,12 @@ import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import { shelfICons } from "../Icons/ShelfIcons";
 
-const CreateShelf = ({ prefillShelf, onClose }) => {
+const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
   const [isOpen, setIsOpen] = useState(prefillShelf ? true : false);
   const [shelfData, setShelfData] = useState(
     prefillShelf || {
       name: "",
-      icon: "",
-      description: "",
+      icon: ""
     }
   );
 
@@ -24,7 +22,7 @@ const CreateShelf = ({ prefillShelf, onClose }) => {
     createShelf({ ...shelfData });
 
     setIsOpen(false);
-    setShelfData({ name: "", icon: "", description: "" });
+    setShelfData({ name: "", icon: ""});
   };
 
   const handleUpdateShelf = () => {
@@ -121,30 +119,6 @@ const CreateShelf = ({ prefillShelf, onClose }) => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <label
-                htmlFor="description"
-                className="text-sm font-medium flex items-center gap-2"
-              >
-                <RiFileTextLine className="w-4 h-4 text-indigo-500" />
-                Description
-                <span className="text-gray-500 font-normal">
-                  {"(Optional)"}
-                </span>
-              </label>
-              <input
-                id="description"
-                type="text"
-                placeholder="Add a brief description of this shelf's purpose"
-                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={shelfData.description}
-                onChange={(e) =>
-                  setShelfData({ ...shelfData, description: e.target.value })
-                }
-              />
             </div>
           </div>
 
