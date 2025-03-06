@@ -1,0 +1,48 @@
+.editor table {
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.editor table td,
+.editor table th {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.editor img {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+}
+
+.editor ul:not(.checkbox-list) {
+  list-style-type: disc;
+  padding-left: 40px;
+}
+
+.editor ol {
+  list-style-type: decimal;
+  padding-left: 40px;
+}
+
+.editor input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  transform: scale(1.5);
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.table-container {
+  position: relative; /* This makes the absolute buttons position correctly */
+  display: inline-block; /* Ensures it wraps around the table */
+}
+.add-row,
+.add-col {
+  position: absolute;
+  z-index: 10;
+}
+
+.katex-html {
+  visibility: hidden;
+}
