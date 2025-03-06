@@ -26,6 +26,7 @@ const EditorWrapper = ({
 
   // Handle content change (passed to the Editor component)
   const handleContentChange = (type, value) => {
+    console.log({ type, value });
     setContent(value);
 
     onSave(type, value);
@@ -45,10 +46,7 @@ const EditorWrapper = ({
         />
       </div>
 
-      {/* Editor Component */}
-      <div className="p-6">
-        <Editor existingContent={content} callback={handleContentChange} />
-      </div>
+      <Editor existingContent={content} callback={handleContentChange} />
     </div>
   );
 };
