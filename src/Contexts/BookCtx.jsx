@@ -36,10 +36,11 @@ const BookCtx = ({ children }) => {
   const { isAuthenticated } = useAuthCtx();
   const { parentType, shelfId } = useParams();
 
-  const getPagesOfBook = async (id) => {
+  const getPagesOfBook = async (id, setPage = true) => {
     try {
       const { data } = await axiosInstance.get(PAGE_API_ENDPOINT + "?id=" + id);
-      setSelectedPage({ index: 0, page: data[0] });
+      if (setPage)
+        setSelectedPage({ index: 0, page: data[0] });
       setPages(data);
     } catch (error) {
       handleError(error);
@@ -137,6 +138,7 @@ const BookCtx = ({ children }) => {
       getUnShelvedBooks();
       getShelves();
       getBooksOfShelf(id);
+      navigate("/");
     } catch (error) {
       handleError(error);
     } finally {
@@ -187,8 +189,9 @@ const BookCtx = ({ children }) => {
   const createNote = async (payload) => {
     try {
       await axiosInstance.post(PAGE_API_ENDPOINT, payload);
-
-      getPagesOfBook(payload.book.id);
+      const { data } = await axiosInstance.get(PAGE_API_ENDPOINT + "?id=" + payload.book.id);
+      getPagesOfBook(payload.book.id, false);
+      setSelectedPage({ index: data?.length - 1, page: data[data?.length - 1 || 0] });
     } catch (error) {
       handleError(error);
     }

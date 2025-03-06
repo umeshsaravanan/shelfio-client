@@ -139,7 +139,7 @@ const PagesOfBook = ({ bookId }) => {
   }
 
   let body;
-
+  debugger
   if (isLoading) {
     body = <ShelfLoader />;
   } else {
