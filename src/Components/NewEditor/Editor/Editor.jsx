@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Prism from "prismjs";
 import katex from "katex";
 
 const Editor = ({ editorRef, handleBlur, value = "" }) => {
-  //eslint-disable-next-line
-  const [content, setContent] = useState(value);
   const [updateKey, setUpdateKey] = useState(0);
+  const contentRef = useRef(value);
 
-  const forceUpdate = () => setUpdateKey((prev) => prev + 1);
+  const forceUpdate = () => {
+    setUpdateKey((prev) => prev + 1);
+  };
+
+  // Update the editor's content when the `value` prop changes
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value;
+      contentRef.current = value; // Update the ref to the latest value
+      forceUpdate();
+    }
+  }, [value, editorRef]);
 
   useEffect(() => {
     editorRef.current.focus();
@@ -30,6 +40,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
           removeButton.onclick = () => {
             attachmentContainer.remove();
             forceUpdate();
+            handleBlur(); //it is not called because no focus on editor
           };
         }
       });
@@ -156,6 +167,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
           removeBtn.onclick = () => {
             wrapper.remove();
             forceUpdate();
+            handleBlur(); //it is not called because no focus on editor
           };
         }
 
@@ -231,7 +243,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
         if (cancelButton) {
           cancelButton.addEventListener("click", () => {
             const emptyNode = document.createTextNode("");
-            linkContainer.parentNode.replaceChild(emptyNode, linkContainer);
+            linkContainer?.parentNode?.replaceChild(emptyNode, linkContainer);
             forceUpdate();
           });
         }
@@ -451,8 +463,8 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       ref={editorRef}
       contentEditable
       onBlur={handleBlur}
-      dangerouslySetInnerHTML={{ __html: content }}
-      className="editor p-4 overflow-y-auto overflow-x-hidden h-[69vh] rounded-b-lg outline-none"
+      dangerouslySetInnerHTML={{ __html: contentRef.current }}
+      className="editor p-4 overflow-y-auto overflow-x-hidden h-[calc(100%-112px)] rounded-b-lg outline-none"
     ></div>
   );
 };

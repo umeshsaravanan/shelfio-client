@@ -166,7 +166,7 @@ const PagesOfBook = ({ bookId }) => {
             </div>
 
             {/* Editor (Right Side) */}
-            <div className="w-3/4 p-4">
+            <div key={selectedPage?.id} className="w-3/4 p-4">
               <EditorWrapper
                 initialContent={selectedPage?.page?.content}
                 initialTitle={selectedPage?.page?.title}

@@ -22,7 +22,7 @@ const Editor = ({ existingContent, callback }) => {
   }, []);
 
   return (
-    <div className="editor-container">
+    <div className="editor-container h-full">
       <RichTextEditor handleBlur={onBlurHandler} value={content} />
     </div>
   );

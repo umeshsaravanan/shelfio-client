@@ -37,6 +37,7 @@ import Blocks from "../Tools/Blocks";
 import MoreTools from "../Tools/MoreTools";
 import AIAssistantButton from "../Tools/AiAssistant";
 import { codeDetector } from "../Utils/CodeDetector";
+import FileDownLoad from "../Tools/FileDownLoad";
 
 const Toolbar = ({ editorRef }) => {
   const [isBold, setIsBold] = useState(false);
@@ -107,28 +108,48 @@ const Toolbar = ({ editorRef }) => {
   };
 
   // Handle paste event to detect and insert code blocks
-  const handlePaste = (event) => {
+  const handlePaste = async (event) => {
     event.preventDefault();
-    const text = (event.clipboardData || window.clipboardData).getData("text");
+    const clipboardData = event.clipboardData || window.clipboardData;
 
-    // Check if the pasted text is code-like
+    // Check for images
+    const files = Array.from(clipboardData.files);
+    if (files.length > 0) {
+      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+      if (imageFiles.length > 0) {
+        const uuid = crypto.randomUUID(); // Generate a unique ID
+        insertAttachment(imageFiles, uuid);
+        return; // Stop further execution since we handled images
+      }
+    }
+
+    // Handle text pasting
+    const text = clipboardData.getData("text");
     if (isCode(text)) {
       insertCodeBlockWithLanguage(text);
     } else {
-      // Insert plain text
       document.execCommand("insertText", false, text);
     }
   };
 
   // Check if the text is code-like
   const isCode = (text) => {
-    // Simple heuristic: check for common code patterns
+    // Trim to avoid accidental whitespace-based detection
+    const trimmedText = text.trim();
+
+    // If it contains multiple lines and at least one line has `{}` or `;`, likely code
+    const lines = trimmedText.split("\n");
+    if (lines.length > 1 && lines.some((line) => /[{};]/.test(line))) {
+      return true;
+    }
+
+    // If it starts with common programming keywords, more reliable
     const codePatterns = [
-      /^\s*(function|class|def|import|export|var|let|const|public|private|return)/,
-      /[{};=<>]/,
-      /^\s*\d+\.\s/, // Ordered list pattern
+      /^\s*(function|class|def|import|export|var|let|const|public|private|return|if|else|try|catch|async|await)/,
+      /^\s*<\/?[a-z][\s\S]*>/, // HTML/XML detection
     ];
-    return codePatterns.some((pattern) => pattern.test(text));
+
+    return codePatterns.some((pattern) => pattern.test(trimmedText));
   };
 
   // Insert code block with detected language
@@ -208,6 +229,14 @@ const Toolbar = ({ editorRef }) => {
     });
 
     execCommand(format);
+  };
+
+  const changeHeading = (heading) => {
+    if (!heading || heading === "p") {
+      document.execCommand("formatBlock", false, "<p>"); // Set normal text
+    } else {
+      document.execCommand("formatBlock", false, `<${heading}>`); // Apply heading
+    }
   };
 
   const outdentText = () => {
@@ -513,7 +542,7 @@ const Toolbar = ({ editorRef }) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
 
-    debugger
+    debugger;
 
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString() || "Click here";
@@ -650,8 +679,6 @@ const Toolbar = ({ editorRef }) => {
       // Replace editor with link
       linkEditorContainer.parentNode.replaceChild(anchor, linkEditorContainer);
 
- 
-
       // Place cursor after the link
       selection.removeAllRanges();
       const newRange = document.createRange();
@@ -678,7 +705,7 @@ const Toolbar = ({ editorRef }) => {
     }
 
     // Add event listeners
-    saveButton.addEventListener("click",  saveLink);
+    saveButton.addEventListener("click", saveLink);
     cancelButton.addEventListener("click", cancelLink);
 
     // Handle enter key on inputs
@@ -1041,7 +1068,21 @@ const Toolbar = ({ editorRef }) => {
 
       // Remove Button
       const removeButton = document.createElement("button");
-      removeButton.textContent = "❌";
+      removeButton.innerHTML = "×";
+      removeButton.title = "Remove code block";
+      removeButton.style.background = "none";
+      removeButton.style.border = "none";
+      removeButton.style.color = "#888";
+      removeButton.style.fontSize = "16px";
+      removeButton.style.cursor = "pointer";
+      removeButton.style.padding = "0px 4px";
+      removeButton.style.borderRadius = "3px";
+      removeButton.style.display = "flex";
+      removeButton.style.alignItems = "center";
+      removeButton.style.justifyContent = "center";
+      removeButton.style.height = "20px";
+      removeButton.style.width = "20px";
+
       Object.assign(removeButton.style, {
         position: "absolute",
         top: "5px",
@@ -1117,48 +1158,53 @@ const Toolbar = ({ editorRef }) => {
   };
 
   return (
-    <div className="toolbar flex flex-wrap justify-center gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
-      <AIAssistantButton />
-      <Blocks
-        insertList={insertList}
-        insertCheckboxList={insertCheckboxList}
-        editorRef={editorRef}
-        insertImage={insertImage}
-        insertCodeBlock={() => insertCodeBlock(undefined, "", uuidv4())}
-        insertAttachment={(files) => insertAttachment(files, uuidv4())}
-        insertLink={insertLink}
-        insertDivider={insertDivider}
-        insertQuote={insertQuote}
-        insertFormula={() => insertFormula(uuidv4())}
-      />
+    <div className="toolbar justify-between flex flex-wrap gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
+      <div className="flex gap-2">
+        <AIAssistantButton />
+        <Blocks
+          insertList={insertList}
+          insertCheckboxList={insertCheckboxList}
+          editorRef={editorRef}
+          insertImage={insertImage}
+          insertCodeBlock={() => insertCodeBlock(undefined, "", uuidv4())}
+          insertAttachment={(files) => insertAttachment(files, uuidv4())}
+          insertLink={insertLink}
+          insertDivider={insertDivider}
+          insertQuote={insertQuote}
+          insertFormula={() => insertFormula(uuidv4())}
+        />
 
-      <TextFormat
-        isBold={isBold}
-        toggleBold={toggleBold}
-        isItalic={isItalic}
-        toggleItalic={toggleItalic}
-        isUnderline={isUnderline}
-        toggleUnderline={toggleUnderline}
-        isHighlighted={isHighlighted}
-        toggleHighlight={toggleHighlight}
-      />
+        <TextFormat
+          isBold={isBold}
+          toggleBold={toggleBold}
+          isItalic={isItalic}
+          toggleItalic={toggleItalic}
+          isUnderline={isUnderline}
+          toggleUnderline={toggleUnderline}
+          isHighlighted={isHighlighted}
+          toggleHighlight={toggleHighlight}
+        />
 
-      <Font
-        fontFamily={fontFamily}
-        changeFontFamily={changeFontFamily}
-        fontSize={fontSize}
-        changeFontSize={changeFontSize}
-      />
+        <Font
+          fontFamily={fontFamily}
+          changeFontFamily={changeFontFamily}
+          fontSize={fontSize}
+          changeFontSize={changeFontSize}
+          changeHeading={changeHeading}
+        />
 
-      <Colors execCommand={execCommand} />
+        <Colors execCommand={execCommand} />
 
-      <MoreTools
-        alignText={alignText}
-        indentText={indentText}
-        outdentText={outdentText}
-        formatText={formatText}
-        activeFormats={textFormat}
-      />
+        <MoreTools
+          alignText={alignText}
+          indentText={indentText}
+          outdentText={outdentText}
+          formatText={formatText}
+          activeFormats={textFormat}
+        />
+      </div>
+
+      <FileDownLoad />
     </div>
   );
 };

@@ -16,7 +16,7 @@ const RichTextEditor = ({ handleBlur: callback, value }) => {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-white h-full">
       <Toolbar editorRef={editorRef} />
       <Editor editorRef={editorRef} handleBlur={handleBlur} value={value} />
     </div>
