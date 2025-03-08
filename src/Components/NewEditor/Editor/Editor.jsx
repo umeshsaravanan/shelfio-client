@@ -1,8 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Prism from "prismjs";
 import katex from "katex";
 
 const Editor = ({ editorRef, handleBlur, value = "" }) => {
+  //eslint-disable-next-line
+  const [content, setContent] = useState(value);
+  const [updateKey, setUpdateKey] = useState(0);
+
+  const forceUpdate = () => setUpdateKey((prev) => prev + 1);
+
   useEffect(() => {
     editorRef.current.focus();
   }, [editorRef]);
@@ -10,10 +16,11 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
   useEffect(() => {
     if (!editorRef.current) return;
 
+    const editor = editorRef.current;
+
     // Function to attach event listeners to remove buttons
     const attachRemoveListeners = () => {
-      const attachments =
-        editorRef.current.querySelectorAll("[id^='container-']");
+      const attachments = editor.querySelectorAll("[id^='container-']");
       attachments.forEach((attachmentContainer) => {
         const uuid = attachmentContainer.id.split("container-")[1];
         const removeButton = attachmentContainer.querySelector(
@@ -22,6 +29,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
         if (removeButton) {
           removeButton.onclick = () => {
             attachmentContainer.remove();
+            forceUpdate();
           };
         }
       });
@@ -29,8 +37,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
 
     // Function to attach event listeners for resizing
     const attachResizeListeners = () => {
-      const attachments =
-        editorRef.current.querySelectorAll("[id^='container-']");
+      const attachments = editor.querySelectorAll("[id^='container-']");
       attachments.forEach((attachmentContainer) => {
         const uuid = attachmentContainer.id.split("container-")[1];
         const resizer = attachmentContainer.querySelector(`#resizer-${uuid}`);
@@ -60,7 +67,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
 
     // Function to attach event listeners for formula-related actions
     const attachFormulaListeners = () => {
-      const formulas = editorRef.current.querySelectorAll("[id^='container-']");
+      const formulas = editor.querySelectorAll("[id^='container-']");
       formulas.forEach((formulaContainer) => {
         const uuid = formulaContainer.id.split("container-")[1];
 
@@ -137,9 +144,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
     };
 
     const attachCodeBlockListeners = () => {
-      const codeBlocks = editorRef.current.querySelectorAll(
-        "[id^='code-container-']"
-      );
+      const codeBlocks = editor.querySelectorAll("[id^='code-container-']");
       codeBlocks.forEach((wrapper) => {
         const uuid = wrapper.id.split("code-container-")[1];
         const removeBtn = wrapper.querySelector(`#code-remove-btn-${uuid}`);
@@ -150,6 +155,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
         if (removeBtn) {
           removeBtn.onclick = () => {
             wrapper.remove();
+            forceUpdate();
           };
         }
 
@@ -176,9 +182,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
     };
 
     const attachLinkBlockListeners = () => {
-      const linkBlocks = editorRef.current.querySelectorAll(
-        "[id^='link-container-']"
-      );
+      const linkBlocks = editor.querySelectorAll("[id^='link-container-']");
       linkBlocks.forEach((linkContainer) => {
         const uuid = linkContainer.id.split("link-container-")[1];
         const saveButton = linkContainer.querySelector(
@@ -203,8 +207,6 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
             const linkUrl = urlInput.value.trim();
             if (!linkUrl) return;
 
-            debugger;
-
             const anchor = document.createElement("a");
             anchor.href = linkUrl;
             anchor.textContent = linkText;
@@ -214,6 +216,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
             anchor.style.pointerEvents = "auto"; // Ensure it's clickable
             anchor.style.cursor = "pointer";
             linkContainer.replaceWith(anchor);
+            forceUpdate();
 
             anchor.addEventListener("click", (event) => {
               event.preventDefault(); // Prevent focus shift in contenteditable
@@ -229,13 +232,14 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
           cancelButton.addEventListener("click", () => {
             const emptyNode = document.createTextNode("");
             linkContainer.parentNode.replaceChild(emptyNode, linkContainer);
+            forceUpdate();
           });
         }
       });
     };
 
     const attachAnchorClickListeners = () => {
-      const anchors = editorRef.current.querySelectorAll("a");
+      const anchors = editor.querySelectorAll("a");
 
       anchors.forEach((anchor) => {
         anchor.style.pointerEvents = "auto"; // Ensure it's clickable
@@ -251,8 +255,9 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
         });
       });
     };
+
     const attachTableListeners = () => {
-      const tables = editorRef.current.querySelectorAll("table");
+      const tables = editor.querySelectorAll("table");
 
       tables.forEach((table) => {
         const uuid = table.id.split("table-")[1]; // Extract UUID from table ID
@@ -275,8 +280,6 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
 
     // Function to show the kebab menu popup
     const showPopup = (event, cell, table, uuid) => {
-      debugger;
-
       event.stopPropagation();
 
       // Remove existing popups
@@ -296,6 +299,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       addRowBtn.onclick = () => {
         addRow(table, cell.parentElement.rowIndex, uuid);
         popup.remove();
+        forceUpdate();
       };
 
       // Add Column Button
@@ -304,6 +308,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       addColBtn.onclick = () => {
         addColumn(table, cell.cellIndex, uuid);
         popup.remove();
+        forceUpdate();
       };
 
       // Delete Row Button
@@ -312,6 +317,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       delRowBtn.onclick = () => {
         deleteRow(table, cell.parentElement.rowIndex);
         popup.remove();
+        forceUpdate();
       };
 
       // Delete Column Button
@@ -320,6 +326,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       delColBtn.onclick = () => {
         deleteColumn(table, cell.cellIndex);
         popup.remove();
+        forceUpdate();
       };
 
       // Delete Table Button
@@ -328,6 +335,7 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       deleteTableBtn.onclick = () => {
         table.parentElement.remove();
         popup.remove();
+        forceUpdate();
       };
 
       // Append buttons to the popup
@@ -436,14 +444,14 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
     attachCodeBlockListeners();
     attachLinkBlockListeners();
     attachAnchorClickListeners();
-  }, [value, editorRef]); //
+  }, [updateKey, editorRef, value]);
 
   return (
     <div
       ref={editorRef}
       contentEditable
       onBlur={handleBlur}
-      dangerouslySetInnerHTML={{ __html: value }}
+      dangerouslySetInnerHTML={{ __html: content }}
       className="editor p-4 overflow-y-auto overflow-x-hidden h-[69vh] rounded-b-lg outline-none"
     ></div>
   );
