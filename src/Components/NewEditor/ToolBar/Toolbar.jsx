@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import katex from "katex";
 import Prism from "prismjs";
+import { v4 as uuidv4 } from "uuid";
 
 import "prismjs";
 import "prismjs/themes/prism.css";
@@ -348,7 +349,7 @@ const Toolbar = ({ editorRef }) => {
     }
   };
 
-  const insertCodeBlock = (language, codeText) => {
+  const insertCodeBlock = (language, codeText, uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
 
@@ -362,6 +363,7 @@ const Toolbar = ({ editorRef }) => {
     wrapper.style.borderRadius = "6px";
     wrapper.style.overflow = "hidden";
     wrapper.setAttribute("contenteditable", "false"); // Prevent editing wrapper
+    wrapper.id = `code-container-${uuid}`;
 
     // Create header for the code block
     const header = document.createElement("div");
@@ -392,6 +394,7 @@ const Toolbar = ({ editorRef }) => {
     select.style.backgroundColor = "#fff";
     select.style.outline = "none";
     select.style.width = "auto";
+    select.id = `code-select-${uuid}`;
 
     languages.forEach((lang) => {
       const option = document.createElement("option");
@@ -424,6 +427,7 @@ const Toolbar = ({ editorRef }) => {
     removeBtn.style.justifyContent = "center";
     removeBtn.style.height = "20px";
     removeBtn.style.width = "20px";
+    removeBtn.id = `code-remove-btn-${uuid}`;
 
     removeBtn.addEventListener("click", () => {
       wrapper.remove();
@@ -461,6 +465,7 @@ const Toolbar = ({ editorRef }) => {
     code.style.wordBreak = "break-word";
     code.style.minHeight = "60px"; // Minimum height for UX
     code.textContent = codeText; // Insert the pasted code inside the <code> element
+    code.id = `code-block-${uuid}`;
 
     let currentLanguage = language;
     pre.className = `language-${currentLanguage}`;
@@ -504,9 +509,11 @@ const Toolbar = ({ editorRef }) => {
     selection.addRange(newRange);
   };
 
-  const insertLink = () => {
+  const insertLink = (uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
+
+    debugger
 
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString() || "Click here";
@@ -522,6 +529,7 @@ const Toolbar = ({ editorRef }) => {
     linkEditorContainer.style.backgroundColor = "#f5f7f9";
     linkEditorContainer.style.border = "1px solid #e1e4e8";
     linkEditorContainer.style.borderRadius = "4px";
+    linkEditorContainer.id = `link-container-${uuid}`;
 
     // Text input
     const textInputContainer = document.createElement("div");
@@ -541,6 +549,7 @@ const Toolbar = ({ editorRef }) => {
     textInput.style.border = "1px solid #ddd";
     textInput.style.borderRadius = "3px";
     textInput.style.fontSize = "14px";
+    textInput.id = `link-text-input-${uuid}`;
 
     textInputContainer.appendChild(textLabel);
     textInputContainer.appendChild(textInput);
@@ -564,6 +573,8 @@ const Toolbar = ({ editorRef }) => {
     urlInput.style.borderRadius = "3px";
     urlInput.style.fontSize = "14px";
 
+    urlInput.id = `link-url-input-${uuid}`;
+
     urlInputContainer.appendChild(urlLabel);
     urlInputContainer.appendChild(urlInput);
 
@@ -583,6 +594,7 @@ const Toolbar = ({ editorRef }) => {
     cancelButton.style.padding = "5px 10px";
     cancelButton.style.fontSize = "14px";
     cancelButton.style.cursor = "pointer";
+    cancelButton.id = `link-cancel-btn-${uuid}`;
 
     // Save button
     const saveButton = document.createElement("button");
@@ -594,6 +606,7 @@ const Toolbar = ({ editorRef }) => {
     saveButton.style.padding = "5px 12px";
     saveButton.style.fontSize = "14px";
     saveButton.style.cursor = "pointer";
+    saveButton.id = `link-save-btn-${uuid}`;
 
     buttonsContainer.appendChild(cancelButton);
     buttonsContainer.appendChild(saveButton);
@@ -616,6 +629,8 @@ const Toolbar = ({ editorRef }) => {
       const linkText = textInput.value.trim() || "Link";
       const linkUrl = urlInput.value.trim();
 
+      debugger;
+
       if (!linkUrl) {
         urlInput.focus();
         return;
@@ -629,9 +644,13 @@ const Toolbar = ({ editorRef }) => {
       anchor.style.color = "#007bff";
       anchor.style.textDecoration = "underline";
       anchor.style.cursor = "pointer";
+      anchor.id = `link-anchor-${uuid}`;
+      anchor.style.pointerEvents = "auto"; // Ensure it's clickable
 
       // Replace editor with link
       linkEditorContainer.parentNode.replaceChild(anchor, linkEditorContainer);
+
+ 
 
       // Place cursor after the link
       selection.removeAllRanges();
@@ -659,7 +678,7 @@ const Toolbar = ({ editorRef }) => {
     }
 
     // Add event listeners
-    saveButton.addEventListener("click", saveLink);
+    saveButton.addEventListener("click",  saveLink);
     cancelButton.addEventListener("click", cancelLink);
 
     // Handle enter key on inputs
@@ -721,7 +740,7 @@ const Toolbar = ({ editorRef }) => {
     selection.addRange(newRange);
   };
 
-  const insertFormula = () => {
+  const insertFormula = (uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
     const range = selection.getRangeAt(0);
@@ -734,6 +753,7 @@ const Toolbar = ({ editorRef }) => {
     wrapper.style.borderRadius = "6px";
     wrapper.style.overflow = "hidden";
     wrapper.setAttribute("contenteditable", "false"); // Prevent editing wrapper
+    wrapper.id = `container-${uuid}`;
 
     // Create header for the formula block
     const header = document.createElement("div");
@@ -767,6 +787,8 @@ const Toolbar = ({ editorRef }) => {
     removeBtn.style.height = "20px";
     removeBtn.style.width = "20px";
 
+    removeBtn.id = `remove-btn-${uuid}`;
+
     removeBtn.addEventListener("click", () => {
       wrapper.remove();
     });
@@ -787,6 +809,7 @@ const Toolbar = ({ editorRef }) => {
 
     // Create editor mode elements
     const editorMode = document.createElement("div");
+    editorMode.id = `editor-mode-${uuid}`;
 
     const input = document.createElement("div");
     input.contentEditable = "true";
@@ -800,6 +823,7 @@ const Toolbar = ({ editorRef }) => {
     input.style.outline = "none";
     input.textContent = "a^2 + b^2"; // Default formula
     input.style.marginBottom = "10px";
+    input.id = `input-${uuid}`;
 
     // Save button
     const saveButton = document.createElement("button");
@@ -811,6 +835,8 @@ const Toolbar = ({ editorRef }) => {
     saveButton.style.borderRadius = "4px";
     saveButton.style.cursor = "pointer";
     saveButton.style.fontSize = "14px";
+
+    saveButton.id = `save-btn-${uuid}`;
 
     editorMode.appendChild(input);
     editorMode.appendChild(saveButton);
@@ -827,6 +853,7 @@ const Toolbar = ({ editorRef }) => {
     renderedMath.style.display = "flex";
     renderedMath.style.justifyContent = "center";
     renderedMath.style.padding = "5px";
+    displayMode.id = `display-mode-${uuid}`;
 
     displayMode.appendChild(renderedMath);
 
@@ -934,7 +961,7 @@ const Toolbar = ({ editorRef }) => {
     toggleEditMode(true);
   };
 
-  const insertAttachment = async (files) => {
+  const insertAttachment = async (files, uuid) => {
     if (!files || files.length === 0) return;
 
     const selection = window.getSelection();
@@ -955,6 +982,7 @@ const Toolbar = ({ editorRef }) => {
       resize: "both", // Allow resizing
       overflow: "auto", // Prevent content overflow
     });
+    attachmentContainer.id = `container-${uuid}`;
 
     for (const file of files) {
       const fileType = file.type.split("/")[0];
@@ -1025,6 +1053,7 @@ const Toolbar = ({ editorRef }) => {
         cursor: "pointer",
         padding: "2px 6px",
       });
+      removeButton.id = `remove-btn-${uuid}`;
 
       removeButton.onclick = () => {
         attachmentContainer.remove();
@@ -1046,6 +1075,7 @@ const Toolbar = ({ editorRef }) => {
       cursor: "se-resize",
       borderRadius: "3px",
     });
+    resizer.id = `resizer-${uuid}`;
 
     attachmentContainer.appendChild(resizer);
 
@@ -1094,12 +1124,12 @@ const Toolbar = ({ editorRef }) => {
         insertCheckboxList={insertCheckboxList}
         editorRef={editorRef}
         insertImage={insertImage}
-        insertCodeBlock={insertCodeBlock}
-        insertAttachment={insertAttachment}
+        insertCodeBlock={() => insertCodeBlock(undefined, "", uuidv4())}
+        insertAttachment={(files) => insertAttachment(files, uuidv4())}
         insertLink={insertLink}
         insertDivider={insertDivider}
         insertQuote={insertQuote}
-        insertFormula={insertFormula}
+        insertFormula={() => insertFormula(uuidv4())}
       />
 
       <TextFormat
