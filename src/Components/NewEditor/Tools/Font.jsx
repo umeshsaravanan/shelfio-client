@@ -76,25 +76,25 @@ const Font = ({
   // Headings configuration
   const headingOptions = [
     {
-      value: "",
+      value: "p",
       label: "Normal",
       icon: MdTextFields, // Use MdTextFields for normal text
       className: "text-gray-600",
     },
     {
-      value: "1",
+      value: "h1",
       label: "Heading 1",
       icon: MdTitle, // Use MdTitle for headings
       className: "text-blue-600 font-bold",
     },
     {
-      value: "2",
+      value: "h2",
       label: "Heading 2",
       icon: MdTitle, // Use MdTitle for headings
       className: "text-green-600 font-semibold",
     },
     {
-      value: "3",
+      value: "h3",
       label: "Heading 3",
       icon: MdTitle, // Use MdTitle for headings
       className: "text-purple-600 font-medium",

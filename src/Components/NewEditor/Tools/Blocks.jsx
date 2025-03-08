@@ -47,8 +47,13 @@ const Blocks = ({
   }, [isOpen]);
 
   const handleFileSelect = (event) => {
-    insertAttachment(event.target.files);
-    setIsOpen(false);
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      insertAttachment(files); // Insert the files into the editor
+      setIsOpen(false);
+    }
+    // Clear the file input value
+    event.target.value = null;
   };
 
   // Dropdown item configuration with colors and descriptions

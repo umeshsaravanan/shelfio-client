@@ -158,7 +158,6 @@ const MoreTools = ({
               )}
               <button
                 onClick={() => {
-                  console.log("called");
                   option.action();
                   setIsOpen(false);
                 }}

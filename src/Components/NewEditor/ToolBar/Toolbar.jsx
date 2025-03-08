@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import katex from "katex";
 import Prism from "prismjs";
+import { v4 as uuidv4 } from "uuid";
 
 import "prismjs";
 import "prismjs/themes/prism.css";
@@ -36,6 +37,7 @@ import Blocks from "../Tools/Blocks";
 import MoreTools from "../Tools/MoreTools";
 import AIAssistantButton from "../Tools/AiAssistant";
 import { codeDetector } from "../Utils/CodeDetector";
+import FileDownLoad from "../Tools/FileDownLoad";
 
 const Toolbar = ({ editorRef }) => {
   const [isBold, setIsBold] = useState(false);
@@ -106,28 +108,48 @@ const Toolbar = ({ editorRef }) => {
   };
 
   // Handle paste event to detect and insert code blocks
-  const handlePaste = (event) => {
+  const handlePaste = async (event) => {
     event.preventDefault();
-    const text = (event.clipboardData || window.clipboardData).getData("text");
+    const clipboardData = event.clipboardData || window.clipboardData;
 
-    // Check if the pasted text is code-like
+    // Check for images
+    const files = Array.from(clipboardData.files);
+    if (files.length > 0) {
+      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+      if (imageFiles.length > 0) {
+        const uuid = crypto.randomUUID(); // Generate a unique ID
+        insertAttachment(imageFiles, uuid);
+        return; // Stop further execution since we handled images
+      }
+    }
+
+    // Handle text pasting
+    const text = clipboardData.getData("text");
     if (isCode(text)) {
       insertCodeBlockWithLanguage(text);
     } else {
-      // Insert plain text
       document.execCommand("insertText", false, text);
     }
   };
 
   // Check if the text is code-like
   const isCode = (text) => {
-    // Simple heuristic: check for common code patterns
+    // Trim to avoid accidental whitespace-based detection
+    const trimmedText = text.trim();
+
+    // If it contains multiple lines and at least one line has `{}` or `;`, likely code
+    const lines = trimmedText.split("\n");
+    if (lines.length > 1 && lines.some((line) => /[{};]/.test(line))) {
+      return true;
+    }
+
+    // If it starts with common programming keywords, more reliable
     const codePatterns = [
-      /^\s*(function|class|def|import|export|var|let|const|public|private|return)/,
-      /[{};=<>]/,
-      /^\s*\d+\.\s/, // Ordered list pattern
+      /^\s*(function|class|def|import|export|var|let|const|public|private|return|if|else|try|catch|async|await)/,
+      /^\s*<\/?[a-z][\s\S]*>/, // HTML/XML detection
     ];
-    return codePatterns.some((pattern) => pattern.test(text));
+
+    return codePatterns.some((pattern) => pattern.test(trimmedText));
   };
 
   // Insert code block with detected language
@@ -207,6 +229,14 @@ const Toolbar = ({ editorRef }) => {
     });
 
     execCommand(format);
+  };
+
+  const changeHeading = (heading) => {
+    if (!heading || heading === "p") {
+      document.execCommand("formatBlock", false, "<p>"); // Set normal text
+    } else {
+      document.execCommand("formatBlock", false, `<${heading}>`); // Apply heading
+    }
   };
 
   const outdentText = () => {
@@ -348,7 +378,7 @@ const Toolbar = ({ editorRef }) => {
     }
   };
 
-  const insertCodeBlock = (language, codeText) => {
+  const insertCodeBlock = (language, codeText, uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
 
@@ -362,6 +392,7 @@ const Toolbar = ({ editorRef }) => {
     wrapper.style.borderRadius = "6px";
     wrapper.style.overflow = "hidden";
     wrapper.setAttribute("contenteditable", "false"); // Prevent editing wrapper
+    wrapper.id = `code-container-${uuid}`;
 
     // Create header for the code block
     const header = document.createElement("div");
@@ -392,6 +423,7 @@ const Toolbar = ({ editorRef }) => {
     select.style.backgroundColor = "#fff";
     select.style.outline = "none";
     select.style.width = "auto";
+    select.id = `code-select-${uuid}`;
 
     languages.forEach((lang) => {
       const option = document.createElement("option");
@@ -424,6 +456,7 @@ const Toolbar = ({ editorRef }) => {
     removeBtn.style.justifyContent = "center";
     removeBtn.style.height = "20px";
     removeBtn.style.width = "20px";
+    removeBtn.id = `code-remove-btn-${uuid}`;
 
     removeBtn.addEventListener("click", () => {
       wrapper.remove();
@@ -461,6 +494,7 @@ const Toolbar = ({ editorRef }) => {
     code.style.wordBreak = "break-word";
     code.style.minHeight = "60px"; // Minimum height for UX
     code.textContent = codeText; // Insert the pasted code inside the <code> element
+    code.id = `code-block-${uuid}`;
 
     let currentLanguage = language;
     pre.className = `language-${currentLanguage}`;
@@ -504,9 +538,11 @@ const Toolbar = ({ editorRef }) => {
     selection.addRange(newRange);
   };
 
-  const insertLink = () => {
+  const insertLink = (uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
+
+    debugger;
 
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString() || "Click here";
@@ -522,6 +558,7 @@ const Toolbar = ({ editorRef }) => {
     linkEditorContainer.style.backgroundColor = "#f5f7f9";
     linkEditorContainer.style.border = "1px solid #e1e4e8";
     linkEditorContainer.style.borderRadius = "4px";
+    linkEditorContainer.id = `link-container-${uuid}`;
 
     // Text input
     const textInputContainer = document.createElement("div");
@@ -541,6 +578,7 @@ const Toolbar = ({ editorRef }) => {
     textInput.style.border = "1px solid #ddd";
     textInput.style.borderRadius = "3px";
     textInput.style.fontSize = "14px";
+    textInput.id = `link-text-input-${uuid}`;
 
     textInputContainer.appendChild(textLabel);
     textInputContainer.appendChild(textInput);
@@ -564,6 +602,8 @@ const Toolbar = ({ editorRef }) => {
     urlInput.style.borderRadius = "3px";
     urlInput.style.fontSize = "14px";
 
+    urlInput.id = `link-url-input-${uuid}`;
+
     urlInputContainer.appendChild(urlLabel);
     urlInputContainer.appendChild(urlInput);
 
@@ -583,6 +623,7 @@ const Toolbar = ({ editorRef }) => {
     cancelButton.style.padding = "5px 10px";
     cancelButton.style.fontSize = "14px";
     cancelButton.style.cursor = "pointer";
+    cancelButton.id = `link-cancel-btn-${uuid}`;
 
     // Save button
     const saveButton = document.createElement("button");
@@ -594,6 +635,7 @@ const Toolbar = ({ editorRef }) => {
     saveButton.style.padding = "5px 12px";
     saveButton.style.fontSize = "14px";
     saveButton.style.cursor = "pointer";
+    saveButton.id = `link-save-btn-${uuid}`;
 
     buttonsContainer.appendChild(cancelButton);
     buttonsContainer.appendChild(saveButton);
@@ -616,6 +658,8 @@ const Toolbar = ({ editorRef }) => {
       const linkText = textInput.value.trim() || "Link";
       const linkUrl = urlInput.value.trim();
 
+      debugger;
+
       if (!linkUrl) {
         urlInput.focus();
         return;
@@ -629,6 +673,8 @@ const Toolbar = ({ editorRef }) => {
       anchor.style.color = "#007bff";
       anchor.style.textDecoration = "underline";
       anchor.style.cursor = "pointer";
+      anchor.id = `link-anchor-${uuid}`;
+      anchor.style.pointerEvents = "auto"; // Ensure it's clickable
 
       // Replace editor with link
       linkEditorContainer.parentNode.replaceChild(anchor, linkEditorContainer);
@@ -721,7 +767,7 @@ const Toolbar = ({ editorRef }) => {
     selection.addRange(newRange);
   };
 
-  const insertFormula = () => {
+  const insertFormula = (uuid) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
     const range = selection.getRangeAt(0);
@@ -734,6 +780,7 @@ const Toolbar = ({ editorRef }) => {
     wrapper.style.borderRadius = "6px";
     wrapper.style.overflow = "hidden";
     wrapper.setAttribute("contenteditable", "false"); // Prevent editing wrapper
+    wrapper.id = `container-${uuid}`;
 
     // Create header for the formula block
     const header = document.createElement("div");
@@ -767,6 +814,8 @@ const Toolbar = ({ editorRef }) => {
     removeBtn.style.height = "20px";
     removeBtn.style.width = "20px";
 
+    removeBtn.id = `remove-btn-${uuid}`;
+
     removeBtn.addEventListener("click", () => {
       wrapper.remove();
     });
@@ -787,6 +836,7 @@ const Toolbar = ({ editorRef }) => {
 
     // Create editor mode elements
     const editorMode = document.createElement("div");
+    editorMode.id = `editor-mode-${uuid}`;
 
     const input = document.createElement("div");
     input.contentEditable = "true";
@@ -800,6 +850,7 @@ const Toolbar = ({ editorRef }) => {
     input.style.outline = "none";
     input.textContent = "a^2 + b^2"; // Default formula
     input.style.marginBottom = "10px";
+    input.id = `input-${uuid}`;
 
     // Save button
     const saveButton = document.createElement("button");
@@ -811,6 +862,8 @@ const Toolbar = ({ editorRef }) => {
     saveButton.style.borderRadius = "4px";
     saveButton.style.cursor = "pointer";
     saveButton.style.fontSize = "14px";
+
+    saveButton.id = `save-btn-${uuid}`;
 
     editorMode.appendChild(input);
     editorMode.appendChild(saveButton);
@@ -827,6 +880,7 @@ const Toolbar = ({ editorRef }) => {
     renderedMath.style.display = "flex";
     renderedMath.style.justifyContent = "center";
     renderedMath.style.padding = "5px";
+    displayMode.id = `display-mode-${uuid}`;
 
     displayMode.appendChild(renderedMath);
 
@@ -934,7 +988,7 @@ const Toolbar = ({ editorRef }) => {
     toggleEditMode(true);
   };
 
-  const insertAttachment = async (files) => {
+  const insertAttachment = async (files, uuid) => {
     if (!files || files.length === 0) return;
 
     const selection = window.getSelection();
@@ -955,6 +1009,7 @@ const Toolbar = ({ editorRef }) => {
       resize: "both", // Allow resizing
       overflow: "auto", // Prevent content overflow
     });
+    attachmentContainer.id = `container-${uuid}`;
 
     for (const file of files) {
       const fileType = file.type.split("/")[0];
@@ -1013,7 +1068,21 @@ const Toolbar = ({ editorRef }) => {
 
       // Remove Button
       const removeButton = document.createElement("button");
-      removeButton.textContent = "❌";
+      removeButton.innerHTML = "×";
+      removeButton.title = "Remove code block";
+      removeButton.style.background = "none";
+      removeButton.style.border = "none";
+      removeButton.style.color = "#888";
+      removeButton.style.fontSize = "16px";
+      removeButton.style.cursor = "pointer";
+      removeButton.style.padding = "0px 4px";
+      removeButton.style.borderRadius = "3px";
+      removeButton.style.display = "flex";
+      removeButton.style.alignItems = "center";
+      removeButton.style.justifyContent = "center";
+      removeButton.style.height = "20px";
+      removeButton.style.width = "20px";
+
       Object.assign(removeButton.style, {
         position: "absolute",
         top: "5px",
@@ -1025,6 +1094,7 @@ const Toolbar = ({ editorRef }) => {
         cursor: "pointer",
         padding: "2px 6px",
       });
+      removeButton.id = `remove-btn-${uuid}`;
 
       removeButton.onclick = () => {
         attachmentContainer.remove();
@@ -1046,6 +1116,7 @@ const Toolbar = ({ editorRef }) => {
       cursor: "se-resize",
       borderRadius: "3px",
     });
+    resizer.id = `resizer-${uuid}`;
 
     attachmentContainer.appendChild(resizer);
 
@@ -1087,48 +1158,53 @@ const Toolbar = ({ editorRef }) => {
   };
 
   return (
-    <div className="toolbar flex flex-wrap justify-center gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
-      <AIAssistantButton />
-      <Blocks
-        insertList={insertList}
-        insertCheckboxList={insertCheckboxList}
-        editorRef={editorRef}
-        insertImage={insertImage}
-        insertCodeBlock={insertCodeBlock}
-        insertAttachment={insertAttachment}
-        insertLink={insertLink}
-        insertDivider={insertDivider}
-        insertQuote={insertQuote}
-        insertFormula={insertFormula}
-      />
+    <div className="toolbar justify-between flex flex-wrap gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
+      <div className="flex gap-2">
+        <AIAssistantButton />
+        <Blocks
+          insertList={insertList}
+          insertCheckboxList={insertCheckboxList}
+          editorRef={editorRef}
+          insertImage={insertImage}
+          insertCodeBlock={() => insertCodeBlock(undefined, "", uuidv4())}
+          insertAttachment={(files) => insertAttachment(files, uuidv4())}
+          insertLink={insertLink}
+          insertDivider={insertDivider}
+          insertQuote={insertQuote}
+          insertFormula={() => insertFormula(uuidv4())}
+        />
 
-      <TextFormat
-        isBold={isBold}
-        toggleBold={toggleBold}
-        isItalic={isItalic}
-        toggleItalic={toggleItalic}
-        isUnderline={isUnderline}
-        toggleUnderline={toggleUnderline}
-        isHighlighted={isHighlighted}
-        toggleHighlight={toggleHighlight}
-      />
+        <TextFormat
+          isBold={isBold}
+          toggleBold={toggleBold}
+          isItalic={isItalic}
+          toggleItalic={toggleItalic}
+          isUnderline={isUnderline}
+          toggleUnderline={toggleUnderline}
+          isHighlighted={isHighlighted}
+          toggleHighlight={toggleHighlight}
+        />
 
-      <Font
-        fontFamily={fontFamily}
-        changeFontFamily={changeFontFamily}
-        fontSize={fontSize}
-        changeFontSize={changeFontSize}
-      />
+        <Font
+          fontFamily={fontFamily}
+          changeFontFamily={changeFontFamily}
+          fontSize={fontSize}
+          changeFontSize={changeFontSize}
+          changeHeading={changeHeading}
+        />
 
-      <Colors execCommand={execCommand} />
+        <Colors execCommand={execCommand} />
 
-      <MoreTools
-        alignText={alignText}
-        indentText={indentText}
-        outdentText={outdentText}
-        formatText={formatText}
-        activeFormats={textFormat}
-      />
+        <MoreTools
+          alignText={alignText}
+          indentText={indentText}
+          outdentText={outdentText}
+          formatText={formatText}
+          activeFormats={textFormat}
+        />
+      </div>
+
+      <FileDownLoad />
     </div>
   );
 };
