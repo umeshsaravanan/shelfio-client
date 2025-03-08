@@ -26,7 +26,6 @@ const EditorWrapper = ({
 
   // Handle content change (passed to the Editor component)
   const handleContentChange = (type, value) => {
-    console.log({ type, value });
     setContent(value);
 
     onSave(type, value);
