@@ -456,6 +456,8 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
     attachCodeBlockListeners();
     attachLinkBlockListeners();
     attachAnchorClickListeners();
+
+    //eslint-disable-next-line
   }, [updateKey, editorRef, value]);
 
   return (

@@ -9,6 +9,7 @@ import CreateShelf from "../Shelf/CreateShelf";
 import Shelf from "../Shelf/Shelf";
 import { useNavigate, useParams } from "react-router-dom";
 import SearchBar from "../SearchBar/SearchBar";
+import UpComingFeatures from "./UpComingFeatures";
 
 const Sidebar = () => {
   const { unShelvedBooks, shelves } = useBookCtx();
@@ -130,6 +131,8 @@ const Sidebar = () => {
               ))}
             </div>
           </div>
+
+          <UpComingFeatures />
         </div>
       </div>
     </div>
