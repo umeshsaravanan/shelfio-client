@@ -3,6 +3,13 @@ import { useNavigate } from "react-router-dom";
 import useAxios from "../Hooks/useAxios";
 import { FORGOT_PASSWORDS_API_ENDPOINT } from "../Config/UserApiEndPoints";
 import BtnLoader from "../Components/Loader/BtnLoader";
+import {
+  FaLock,
+  FaEnvelope,
+  FaArrowRight,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -36,21 +43,10 @@ const ForgotPassword = () => {
       <div className="m-auto w-full max-w-md p-8 bg-white rounded-xl shadow-2xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="flex justify-between items-center mb-6">
-            <button
-              onClick={() => navigate("/login")}
-              className="p-2 rounded-full hover:bg-gray-100 transition-all duration-200"
-            >
-              <span className="material-symbols-outlined text-indigo-700">
-                arrow_back
-              </span>
-            </button>
-            <div className="w-10 h-10 mx-auto rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
-              <span className="material-symbols-outlined text-white">
-                lock_reset
-              </span>
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
+              <FaLock className="text-white text-3xl" />
             </div>
-            <div className="w-8"></div> {/* Empty div for balanced layout */}
           </div>
           <h2 className="text-3xl font-bold text-gray-800">Forgot Password</h2>
           <p className="text-gray-500 mt-2">
@@ -66,9 +62,7 @@ const ForgotPassword = () => {
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
-                <span className="material-symbols-outlined text-indigo-600">
-                  mail
-                </span>
+                <FaEnvelope className="text-indigo-600" />
               </span>
               <input
                 type="email"
@@ -92,7 +86,7 @@ const ForgotPassword = () => {
             ) : (
               <>
                 <span>Send Reset Link</span>
-                <span className="material-symbols-outlined">arrow_forward</span>
+                <FaArrowRight />
               </>
             )}
           </button>
@@ -100,16 +94,14 @@ const ForgotPassword = () => {
           {/* Status Messages */}
           {message && (
             <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center text-green-700">
-              <span className="material-symbols-outlined mr-2">
-                check_circle
-              </span>
+              <FaCheckCircle className="mr-2" />
               <p>{message}</p>
             </div>
           )}
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg justify-center flex items-center text-red-700">
-              <span className="material-symbols-outlined mr-2">error</span>
+              <FaExclamationCircle className="mr-2" />
               <p>{error}</p>
             </div>
           )}

@@ -4,6 +4,14 @@ import useAxios from "../Hooks/useAxios";
 import { RESET_PASSWORDS_API_ENDPOINT } from "../Config/UserApiEndPoints";
 import { useAuthCtx } from "../Contexts/AuthCtx";
 import { DASHBOARD_ROUTE_POINT } from "../Config/Routes";
+import {
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaCheck,
+  FaExclamationCircle,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -77,9 +85,7 @@ const ResetPassword = () => {
         <div className="mb-8 text-center">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-3xl">
-                lock_reset
-              </span>
+              <FaLock className="text-white text-3xl" />
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-800">Reset Password</h2>
@@ -91,7 +97,7 @@ const ResetPassword = () => {
         {tokenExpired ? (
           <div className="space-y-6">
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-700">
-              <span className="material-symbols-outlined mr-2">error</span>
+              <FaExclamationCircle className="mr-2" />
               <p>{error}</p>
             </div>
             <button
@@ -110,9 +116,7 @@ const ResetPassword = () => {
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-3 flex items-center text-gray-500">
-                  <span className="material-symbols-outlined text-indigo-600">
-                    lock
-                  </span>
+                  <FaLock className="text-indigo-600" />
                 </span>
                 <input
                   type={passwordVisible ? "text" : "password"}
@@ -128,9 +132,11 @@ const ResetPassword = () => {
                   onClick={togglePasswordVisibility}
                   className="absolute inset-y-0 right-3 flex items-center"
                 >
-                  <span className="material-symbols-outlined text-gray-500">
-                    {passwordVisible ? "visibility_off" : "visibility"}
-                  </span>
+                  {passwordVisible ? (
+                    <FaEyeSlash className="text-gray-500" />
+                  ) : (
+                    <FaEye className="text-gray-500" />
+                  )}
                 </button>
               </div>
               <p className="text-gray-500 text-sm">
@@ -139,8 +145,8 @@ const ResetPassword = () => {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200   rounded-lg flex items-center text-red-700">
-                <span className="material-symbols-outlined mr-2">error</span>
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-700">
+                <FaExclamationCircle className="mr-2" />
                 <p>{error}</p>
               </div>
             )}
@@ -148,9 +154,7 @@ const ResetPassword = () => {
             {/* Status Messages */}
             {message && (
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg flex items-center text-green-700">
-                <span className="material-symbols-outlined mr-2">
-                  check_circle
-                </span>
+                <FaCheckCircle className="mr-2" />
                 <p>{message}</p>
               </div>
             )}
@@ -188,7 +192,7 @@ const ResetPassword = () => {
               ) : (
                 <>
                   <span>Reset Password</span>
-                  <span className="material-symbols-outlined">check</span>
+                  <FaCheck />
                 </>
               )}
             </button>
