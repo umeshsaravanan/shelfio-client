@@ -92,7 +92,7 @@ const Sidebar = () => {
         <CreateBook />
 
         {/* Books List */}
-        <div className="space-y-4 h-[64vh] overflow-auto">
+        <div className="space-y-4 h-[64vh] overflow-auto pr-2">
           {/* Shelved Books */}
           <div className="mb-6">
             <div className="flex items-center justify-between px-2 mb-3">
@@ -115,22 +115,24 @@ const Sidebar = () => {
           </div>
 
           {/* Unshelved Books */}
-          <div>
-            <div className="flex items-center gap-2 px-2 mb-3 text-sm font-medium text-gray-600">
-              <FaBook size={16} />
-              <span>Unshelved Books</span>
+          {unShelvedBooks.length ? (
+            <div>
+              <div className="flex items-center gap-2 px-2 mb-3 text-sm font-medium text-gray-600">
+                <FaBook size={16} />
+                <span>Unshelved Books</span>
+              </div>
+              <div className="pl-4 space-y-1">
+                {unShelvedBooks.map((book) => (
+                  <Books
+                    onClick={() => onClickHandler(book)}
+                    key={book.id}
+                    bookData={book}
+                    selectedBook={selectedBook}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="pl-4 space-y-1">
-              {unShelvedBooks.map((book) => (
-                <Books
-                  onClick={() => onClickHandler(book)}
-                  key={book.id}
-                  bookData={book}
-                  selectedBook={selectedBook}
-                />
-              ))}
-            </div>
-          </div>
+          ) : null}
 
           <UpComingFeatures />
         </div>

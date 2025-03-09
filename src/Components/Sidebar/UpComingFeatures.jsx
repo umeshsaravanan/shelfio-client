@@ -29,7 +29,7 @@ const UpComingFeatures = () => {
         Coming Soon
       </span> */}
         </div>
-        <button className="text-indigo-500 hover:text-indigo-700 cursor-default">
+        {/* <button className="text-indigo-500 hover:text-indigo-700 cursor-default">
           <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fillRule="evenodd"
@@ -37,7 +37,7 @@ const UpComingFeatures = () => {
               clipRule="evenodd"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
 
       <div className="pl-4 space-y-2">
