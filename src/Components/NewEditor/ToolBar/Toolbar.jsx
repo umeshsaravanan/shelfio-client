@@ -268,8 +268,12 @@ const Toolbar = ({ editorRef }) => {
     listItem.classList.add("checkbox-item");
 
     const checkbox = document.createElement("input");
+    checkbox.setAttribute("data-checked", "false"); // Default unchecked
     checkbox.type = "checkbox";
     checkbox.style.marginRight = "8px";
+    checkbox.addEventListener("change", () => {
+      checkbox.setAttribute("data-checked", checkbox.checked);
+    });
 
     const textNode = document.createElement("span");
     textNode.contentEditable = "true";
@@ -315,7 +319,7 @@ const Toolbar = ({ editorRef }) => {
         const textContent = textNode ? textNode.textContent.trim() : "";
 
         if (textContent === "") {
-          // If the checkbox has no text, remove the list item and exit the checkbox list
+          // Remove empty checkbox item
           event.preventDefault();
           currentLi.remove();
 
@@ -326,7 +330,6 @@ const Toolbar = ({ editorRef }) => {
 
             checkboxList.insertAdjacentElement("afterend", newSpan);
 
-            // Move cursor to the new span
             selection.removeAllRanges();
             const newRange = document.createRange();
             newRange.selectNodeContents(newSpan);
@@ -334,7 +337,7 @@ const Toolbar = ({ editorRef }) => {
             selection.addRange(newRange);
           }
         } else {
-          // If there is text, create a new checkbox list item
+          // Create new checkbox item
           event.preventDefault();
 
           const newListItem = document.createElement("li");
@@ -342,8 +345,12 @@ const Toolbar = ({ editorRef }) => {
           newListItem.classList.add("checkbox-item");
 
           const checkbox = document.createElement("input");
+          checkbox.setAttribute("data-checked", "false");
           checkbox.type = "checkbox";
           checkbox.style.marginRight = "8px";
+          checkbox.addEventListener("change", () => {
+            checkbox.setAttribute("data-checked", checkbox.checked);
+          });
 
           const newTextNode = document.createElement("span");
           newTextNode.contentEditable = "true";
@@ -355,7 +362,6 @@ const Toolbar = ({ editorRef }) => {
 
           currentLi.parentNode.insertBefore(newListItem, currentLi.nextSibling);
 
-          // Move cursor to the new list item
           selection.removeAllRanges();
           const newRange = document.createRange();
           newRange.selectNodeContents(newTextNode);
@@ -370,7 +376,6 @@ const Toolbar = ({ editorRef }) => {
     return () => {
       editor.removeEventListener("keydown", handleKeyDown);
     };
-
     //eslint-disable-next-line
   }, []);
 
