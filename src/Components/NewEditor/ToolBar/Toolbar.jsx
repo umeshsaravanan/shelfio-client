@@ -38,6 +38,9 @@ import MoreTools from "../Tools/MoreTools";
 import AIAssistantButton from "../Tools/AiAssistant";
 import { codeDetector } from "../Utils/CodeDetector";
 import FileDownLoad from "../Tools/FileDownLoad";
+import useAxios from "../../../Hooks/useAxios";
+import { BASE_URL } from "../../../Config/Config";
+import { useBookCtx } from "../../../Contexts/BookCtx";
 
 const Toolbar = ({ editorRef }) => {
   const [isBold, setIsBold] = useState(false);
@@ -47,6 +50,9 @@ const Toolbar = ({ editorRef }) => {
   const [fontSize, setFontSize] = useState("16px");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [textFormat, setTextFormat] = useState([]);
+
+  const { axiosInstance } = useAxios();
+  const { setShowOverlayLoading } = useBookCtx();
 
   const highlightColor = "ffff00";
 
@@ -542,8 +548,6 @@ const Toolbar = ({ editorRef }) => {
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
 
-    debugger;
-
     const range = selection.getRangeAt(0);
     const selectedText = selection.toString() || "Click here";
 
@@ -657,8 +661,6 @@ const Toolbar = ({ editorRef }) => {
     function saveLink() {
       const linkText = textInput.value.trim() || "Link";
       const linkUrl = urlInput.value.trim();
-
-      debugger;
 
       if (!linkUrl) {
         urlInput.focus();
@@ -1006,15 +1008,39 @@ const Toolbar = ({ editorRef }) => {
       background: "#f9f9f9",
       position: "relative",
       maxWidth: "100%",
-      resize: "both", // Allow resizing
-      overflow: "auto", // Prevent content overflow
+      resize: "both",
+      overflow: "auto",
     });
-    attachmentContainer.id = `container-${uuid}`;
+    attachmentContainer.id = `attach-container-${uuid}`;
 
     for (const file of files) {
+      // Upload file to API
+      const formData = new FormData();
+      formData.append("file", file);
+
+      let fileURL;
+      let fileId;
+      try {
+        setShowOverlayLoading(true);
+        const { data } = await axiosInstance.post(`file/upload`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Ensure correct format
+          },
+        });
+
+        fileURL = `${BASE_URL}/file/${data.file_id}`;
+        fileId = data.file_id;
+      } catch (error) {
+        console.error(
+          "Error uploading file:",
+          error.response?.data || error.message
+        );
+      } finally {
+        setShowOverlayLoading(false);
+      }
+
       const fileType = file.type.split("/")[0];
       const fileExtension = file.name.split(".").pop().toLowerCase();
-      const fileURL = URL.createObjectURL(file);
       let element;
 
       if (fileType === "image") {
@@ -1066,23 +1092,13 @@ const Toolbar = ({ editorRef }) => {
         element.appendChild(link);
       }
 
+      element.id = `element-${uuid}-${fileId}`;
+
       // Remove Button
       const removeButton = document.createElement("button");
       removeButton.innerHTML = "×";
-      removeButton.title = "Remove code block";
-      removeButton.style.background = "none";
-      removeButton.style.border = "none";
-      removeButton.style.color = "#888";
-      removeButton.style.fontSize = "16px";
-      removeButton.style.cursor = "pointer";
-      removeButton.style.padding = "0px 4px";
-      removeButton.style.borderRadius = "3px";
-      removeButton.style.display = "flex";
-      removeButton.style.alignItems = "center";
-      removeButton.style.justifyContent = "center";
-      removeButton.style.height = "20px";
-      removeButton.style.width = "20px";
-
+      removeButton.title = "Remove attachment";
+      removeButton.id = `remove-btn-${uuid}`;
       Object.assign(removeButton.style, {
         position: "absolute",
         top: "5px",
@@ -1094,63 +1110,32 @@ const Toolbar = ({ editorRef }) => {
         cursor: "pointer",
         padding: "2px 6px",
       });
-      removeButton.id = `remove-btn-${uuid}`;
 
-      removeButton.onclick = () => {
-        attachmentContainer.remove();
+      removeButton.onclick = removeButton.onclick = async () => {
+        try {
+          const response = await axiosInstance.delete(`file/delete/${fileId}`);
+          if (response.status === 200) {
+            attachmentContainer.remove();
+          } else {
+            console.error("Failed to delete file:", response);
+          }
+        } catch (error) {
+          console.error("Error deleting file:", error);
+        }
       };
 
       attachmentContainer.appendChild(element);
       attachmentContainer.appendChild(removeButton);
     }
 
-    // Add Resizer
-    const resizer = document.createElement("div");
-    Object.assign(resizer.style, {
-      width: "10px",
-      height: "10px",
-      background: "#666",
-      position: "absolute",
-      bottom: "0",
-      right: "0",
-      cursor: "se-resize",
-      borderRadius: "3px",
-    });
-    resizer.id = `resizer-${uuid}`;
-
-    attachmentContainer.appendChild(resizer);
-
-    // Resizing logic
-    resizer.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      document.addEventListener("mousemove", resize);
-      document.addEventListener("mouseup", stopResize);
-    });
-
-    const resize = (e) => {
-      attachmentContainer.style.width = `${
-        e.clientX - attachmentContainer.getBoundingClientRect().left
-      }px`;
-      attachmentContainer.style.height = `${
-        e.clientY - attachmentContainer.getBoundingClientRect().top
-      }px`;
-    };
-
-    const stopResize = () => {
-      document.removeEventListener("mousemove", resize);
-      document.removeEventListener("mouseup", stopResize);
-    };
-
-    // Add an empty paragraph (to move the cursor below the attachment)
+    // Insert into editor
     const emptyParagraph = document.createElement("p");
-    emptyParagraph.innerHTML = "<br>"; // Ensures there is space to move cursor down
+    emptyParagraph.innerHTML = "<br>";
 
-    // Insert elements into the editor
     range.collapse(false);
     range.insertNode(emptyParagraph);
     range.insertNode(attachmentContainer);
 
-    // Move the cursor after the attachment
     range.setStartAfter(emptyParagraph);
     range.setEndAfter(emptyParagraph);
     selection.removeAllRanges();
