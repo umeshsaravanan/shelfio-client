@@ -1028,7 +1028,7 @@ const Toolbar = ({ editorRef }) => {
           },
         });
 
-        fileURL = `${BASE_URL}file/${data.file_id}`;
+        fileURL = `${BASE_URL}/file/${data.file_id}`;
         fileId = data.file_id;
       } catch (error) {
         console.error(
