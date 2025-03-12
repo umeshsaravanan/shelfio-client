@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Prism from "prismjs";
 import katex from "katex";
+import useAxios from "../../../Hooks/useAxios";
 
 const Editor = ({ editorRef, handleBlur, value = "" }) => {
   const [updateKey, setUpdateKey] = useState(0);
   const contentRef = useRef(value);
+  const { axiosInstance } = useAxios();
 
   const forceUpdate = () => {
     setUpdateKey((prev) => prev + 1);
@@ -23,6 +25,18 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
     editorRef.current.focus();
   }, [editorRef]);
 
+  const deleteFile = async (fileId) => {
+    try {
+      await axiosInstance.delete(`file/delete/${fileId}`);
+      console.log(`Deleted file: ${fileId}`);
+    } catch (error) {
+      console.error(
+        "Error deleting file:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   useEffect(() => {
     if (!editorRef.current) return;
 
@@ -30,15 +44,37 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
 
     // Function to attach event listeners to remove buttons
     const attachRemoveListeners = () => {
-      const attachments = editor.querySelectorAll("[id^='container-']");
+      const attachments = editor.querySelectorAll("[id^='attach-container-']");
+
       attachments.forEach((attachmentContainer) => {
         const uuid = attachmentContainer.id.split("container-")[1];
         const removeButton = attachmentContainer.querySelector(
           `#remove-btn-${uuid}`
         );
         if (removeButton) {
-          removeButton.onclick = () => {
+          removeButton.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
             attachmentContainer.remove();
+
+            const fileElement = attachmentContainer.querySelector(
+              `[id^='element-${uuid}-']`
+            );
+
+            if (!fileElement) return;
+
+            // Extract fileId from element ID
+            const fileId = fileElement.id.split(`element-${uuid}-`)[1];
+
+            // Remove container immediately
+            attachmentContainer.remove();
+
+            // Call delete API in the background
+            if (fileId) {
+              deleteFile(fileId);
+            }
+
             forceUpdate();
             handleBlur(); //it is not called because no focus on editor
           };
