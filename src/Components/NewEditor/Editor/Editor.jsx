@@ -483,9 +483,32 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
       };
     };
 
-    // Attach table listeners when the component mounts or updates
-    attachTableListeners();
+    const updateCheckboxStates = () => {
+      document
+        .querySelectorAll("input[type='checkbox']")
+        .forEach((checkbox) => {
+          // Initialize checked state based on `data-checked` attribute
+          checkbox.checked = checkbox.getAttribute("data-checked") === "true";
 
+          // Remove any existing event listener to prevent duplicates
+          checkbox.removeEventListener("change", handleCheckboxChange);
+
+          // Add a new event listener to toggle `data-checked` when clicked
+          checkbox.addEventListener("change", handleCheckboxChange);
+        });
+    };
+
+    const handleCheckboxChange = (event) => {
+      const checkbox = event.target;
+      checkbox.setAttribute(
+        "data-checked",
+        checkbox.checked ? "true" : "false"
+      );
+    };
+
+    // Call this function after loading saved HTML or dynamically adding checkboxes
+    updateCheckboxStates();
+    attachTableListeners();
     attachRemoveListeners();
     attachResizeListeners();
     attachFormulaListeners();
