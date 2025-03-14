@@ -1193,8 +1193,7 @@ const Toolbar = ({ editorRef }) => {
           activeFormats={textFormat}
         />
       </div>
-
-      <FileDownLoad />
+      <FileDownLoad editorRef={editorRef} />
     </div>
   );
 };
