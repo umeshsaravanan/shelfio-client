@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Prism from "prismjs";
 import katex from "katex";
 import useAxios from "../../../Hooks/useAxios";
+import AskAI from "../../AI/AskAI";
 
 const Editor = ({ editorRef, handleBlur, value = "" }) => {
   const [updateKey, setUpdateKey] = useState(0);
@@ -520,13 +521,16 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
   }, [updateKey, editorRef, value]);
 
   return (
-    <div
-      ref={editorRef}
-      contentEditable
-      onBlur={handleBlur}
-      dangerouslySetInnerHTML={{ __html: contentRef.current }}
-      className="editor p-4 overflow-y-auto overflow-x-hidden h-[calc(100%-112px)] rounded-b-lg outline-none"
-    ></div>
+    <div className="relative editor p-6 overflow-x-hidden h-[calc(100%-130px)] rounded-b-lg">
+      <div
+        ref={editorRef}
+        contentEditable
+        onBlur={handleBlur}
+        dangerouslySetInnerHTML={{ __html: contentRef.current }}
+        className="outline-none h-full  overflow-y-auto"
+      ></div>
+      <AskAI editorRef={editorRef} />
+    </div>
   );
 };
 
