@@ -1150,7 +1150,6 @@ const Toolbar = ({ editorRef }) => {
   return (
     <div className="toolbar justify-between flex flex-wrap gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
       <div className="flex gap-2">
-        <AIAssistantButton />
         <Blocks
           insertList={insertList}
           insertCheckboxList={insertCheckboxList}
