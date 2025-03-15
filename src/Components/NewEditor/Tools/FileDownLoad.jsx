@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { IoMdDownload } from "react-icons/io";
 import { jsPDF } from "jspdf";
 
@@ -16,7 +16,7 @@ const FileDownLoad = ({ editorRef }) => {
       autoPaging: "text",
       x: 0,
       y: 0,
-      width: 190, 
+      width: 190,
       windowWidth: 675,
     });
   };

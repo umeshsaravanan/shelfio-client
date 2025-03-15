@@ -44,6 +44,50 @@ const Sidebar = () => {
           onClick={handleLogoClick}
           className="flex items-center gap-2 mb-8 cursor-pointer"
         >
+          <svg viewBox="0 0 100 100" className="w-8 h-8 text-indigo-600">
+            <rect
+              x="10"
+              y="70"
+              width="80"
+              height="10"
+              className="fill-current"
+            />
+            <rect
+              x="15"
+              y="30"
+              width="10"
+              height="40"
+              className="fill-current opacity-50"
+            />
+            <rect
+              x="30"
+              y="20"
+              width="10"
+              height="50"
+              className="fill-current opacity-70"
+            />
+            <rect
+              x="45"
+              y="40"
+              width="10"
+              height="30"
+              className="fill-current opacity-50"
+            />
+            <rect
+              x="60"
+              y="10"
+              width="10"
+              height="60"
+              className="fill-current opacity-70"
+            />
+            <rect
+              x="75"
+              y="50"
+              width="10"
+              height="20"
+              className="fill-current opacity-50"
+            />
+          </svg>
           <h1 className="text-xl font-bold text-gray-800">Shelfbook</h1>
         </div>
 

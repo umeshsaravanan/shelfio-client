@@ -123,3 +123,10 @@
 .popup-menu button:hover {
   background: #f0f0f0;
 }
+
+.editor ::selection {
+  background-color: #cce7ff; /* Light blue */
+  color: black; /* Adjust text color if needed */
+}
+
+

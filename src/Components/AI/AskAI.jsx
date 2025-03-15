@@ -7,7 +7,6 @@ const AskAI = ({ editorRef }) => {
   const [positionAtTop, setPositionAtTop] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedText, setSelectedText] = useState("");
-  const [isClickInProgress, setIsClickInProgress] = useState(false); // Track click state
 
   const handleSelection = () => {
     if (showPopup) return; // Ignore selection changes when the popup is open
@@ -35,22 +34,19 @@ const AskAI = ({ editorRef }) => {
     setShowAIIcon(true);
   };
 
-  // useEffect(() => {
-  //   document.addEventListener("selectionchange", handleSelection);
-  //   return () =>
-  //     document.removeEventListener("selectionchange", handleSelection);
-  // }, [showPopup]); // Re-run effect when showPopup changes
+  useEffect(() => {
+    document.addEventListener("selectionchange", handleSelection);
+    return () =>
+      document.removeEventListener("selectionchange", handleSelection);
+
+    //eslint-disable-next-line
+  }, [showPopup]); // Re-run effect when showPopup changes
 
   const handleAIClick = (e) => {
     e.stopPropagation(); // Stop event propagation
     e.preventDefault(); // Prevent default behavior (if any)
-    console.log("Ask AI button clicked"); // Debugging log
 
-    setIsClickInProgress(true); // Set click in progress
     setShowPopup(true);
-
-    // Reset the flag after a short delay
-    setTimeout(() => setIsClickInProgress(false), 100);
   };
 
   if (!showAIIcon || !selectionRect) return null;
@@ -84,8 +80,8 @@ const AskAI = ({ editorRef }) => {
           onClick={handleAIClick}
           title="Ask Shelfbook AI"
           style={{
-            top: selectionRect.top,
-            left: selectionRect.left,
+            top: selectionRect.top + 30,
+            left: selectionRect.left + 25,
             transform: "translateY(-50%)",
             zIndex: 1000, // Ensure the button is above other elements
           }}

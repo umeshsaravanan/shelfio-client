@@ -521,13 +521,13 @@ const Editor = ({ editorRef, handleBlur, value = "" }) => {
   }, [updateKey, editorRef, value]);
 
   return (
-    <div className="relative">
+    <div className="relative editor p-6 overflow-x-hidden h-[calc(100%-130px)] rounded-b-lg">
       <div
         ref={editorRef}
         contentEditable
         onBlur={handleBlur}
         dangerouslySetInnerHTML={{ __html: contentRef.current }}
-        className="editor p-4 overflow-y-auto overflow-x-hidden h-[calc(100%-112px)] rounded-b-lg outline-none"
+        className="outline-none h-full  overflow-y-auto"
       ></div>
       <AskAI editorRef={editorRef} />
     </div>

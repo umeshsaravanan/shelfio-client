@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -19,6 +19,9 @@ const AIPopup = ({ selectedText, onClose }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+
+  // Reference to the rendered markdown content
+  const markdownRef = useRef(null);
 
   const { axiosInstance } = useAxios();
 
@@ -57,26 +60,33 @@ const AIPopup = ({ selectedText, onClose }) => {
     setIsTextExpanded(!isTextExpanded);
   };
 
-  const copyResponseToClipboard = () => {
-    if (!response) return;
+  const copyResponseToClipboard = async () => {
+    if (!markdownRef.current) {
+      console.error("Markdown ref is null or undefined.");
+      return;
+    }
 
-    // Create temporary element with HTML content
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = response.response || "";
+    const htmlContent = markdownRef.current.innerHTML;
+    const textContent = markdownRef.current.textContent;
 
-    // Convert the markdown to HTML for clipboard
-    const tempHtml = document.createElement("div");
-    tempHtml.innerHTML = response.response || "";
+    try {
+      // Create Clipboard Items
+      setIsCopied(true);
 
-    navigator.clipboard
-      .writeText(tempElement.textContent)
-      .then(() => {
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err);
+      const htmlBlob = new Blob([htmlContent], { type: "text/html" });
+      const textBlob = new Blob([textContent], { type: "text/plain" });
+
+      const clipboardItem = new ClipboardItem({
+        "text/html": htmlBlob,
+        "text/plain": textBlob, // Adds text fallback
       });
+
+      await navigator.clipboard.write([clipboardItem]);
+
+      setTimeout(() => setIsCopied(false), 500);
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
   };
 
   // Truncate selected text if it's too long
@@ -104,15 +114,15 @@ const AIPopup = ({ selectedText, onClose }) => {
           e.stopPropagation();
         }}
         className={`fixed z-30 ${
-          isFullScreen ? "inset-0" : "top-0 right-0 h-full"
+          isFullScreen ? "inset-0" : "top-7 right-0 h-full"
         } flex items-center justify-end`}
       >
         <div
-          className={`bg-white shadow-lg border-l border-t border-b border-gray-200 flex flex-col overflow-hidden transition-all duration-300 ease-in-out
+          className={`bg-white shadow-lg  flex flex-col overflow-hidden transition-all duration-300 ease-in-out
           ${
             isFullScreen
               ? "w-full h-full rounded-none animate-scale-in"
-              : "w-96 h-5/6 rounded-l-lg animate-slide-left"
+              : "w-96 h-[90vh] rounded-l-lg animate-slide-left"
           }`}
         >
           {/* Header */}
@@ -319,17 +329,25 @@ const AIPopup = ({ selectedText, onClose }) => {
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                       >
+                        <rect
+                          x="9"
+                          y="9"
+                          width="11"
+                          height="11"
+                          rx="2"
+                          strokeWidth={2}
+                        />
                         <path
+                          d="M5 15V5a2 2 0 012-2h8"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5m10 0h2a2 2 0 012 2v10a2 2 0 01-2 2h-4m-6-6v3a2 2 0 002 2h2a2 2 0 002-2v-1"
                         />
                       </svg>
                     )}
                   </button>
                 </div>
-                <div className="pr-8">
+                <div className="pr-8" ref={markdownRef}>
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkMath]}
                     rehypePlugins={[rehypeKatex, rehypeHighlight]}
@@ -367,13 +385,16 @@ const AIPopup = ({ selectedText, onClose }) => {
 
           {/* Input Area */}
           <div className="p-4 border-t border-gray-200 bg-white">
-            <div className="flex space-x-2">
-              <div className="flex-1 relative">
+            <div className="flex  space-x-2">
+              <div className="flex-1 relative items-center">
                 <textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full p-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                  disabled={isLoading}
+                  className={`w-full p-3 mt-1 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none ${
+                    isLoading ? " opacity-50" : ""
+                  }`}
                   placeholder="Ask AI about the selected text..."
                   rows={1}
                   style={{ minHeight: "44px", maxHeight: "120px" }}
