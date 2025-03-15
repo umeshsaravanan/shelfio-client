@@ -31,10 +31,10 @@ const Sidebar = () => {
     }
   }, [parentType, child1Id, parentId]);
 
-  const handleLogoClick = () =>{
-    setSelectedBook(null); 
+  const handleLogoClick = () => {
+    setSelectedBook(null);
     navigate("/");
-  }
+  };
 
   return (
     <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
@@ -97,7 +97,7 @@ const Sidebar = () => {
         <CreateBook />
 
         {/* Books List */}
-        <div className="space-y-4 h-[64vh] overflow-auto pr-2">
+        <div className="space-y-4 h-[calc(100%-190px)] overflow-auto pr-2">
           {/* Shelved Books */}
           <div className="mb-6">
             <div className="flex items-center justify-between px-2 mb-3">

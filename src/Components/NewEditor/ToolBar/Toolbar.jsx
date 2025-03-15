@@ -35,7 +35,6 @@ import Colors from "../Tools/Colors";
 import Blocks from "../Tools/Blocks";
 
 import MoreTools from "../Tools/MoreTools";
-import AIAssistantButton from "../Tools/AiAssistant";
 import { codeDetector } from "../Utils/CodeDetector";
 import FileDownLoad from "../Tools/FileDownLoad";
 import useAxios from "../../../Hooks/useAxios";
@@ -113,10 +112,90 @@ const Toolbar = ({ editorRef }) => {
     editor.addEventListener("keydown", handleKeyDown);
   };
 
+  const generateUUID = () => {
+    return crypto.randomUUID(); // Generates a unique ID
+  };
+
+  const insertHTMLAtCursor = (html) => {
+    const selection = window.getSelection();
+    if (selection.rangeCount === 0) return; // No valid selection
+
+    const range = selection.getRangeAt(0);
+    range.deleteContents(); // Remove any selected text
+
+    // Create a temporary container to parse the HTML
+    const div = document.createElement("div");
+    div.innerHTML = html;
+
+    // Check if the pasted content contains a table
+    const table = div.querySelector("table");
+    if (table) {
+      table.classList.add("editor-table"); // Ensure it has the editor class
+      table.id = `table-${generateUUID()}`;
+
+      // Assign unique IDs to rows and cells
+      table.querySelectorAll("tr").forEach((tr, rowIndex) => {
+        tr.id = `row-${table.id}-${rowIndex}`;
+        tr.querySelectorAll("td").forEach((td, colIndex) => {
+          td.id = `cell-${table.id}-${rowIndex}-${colIndex}`;
+          td.classList.add("resizable-cell");
+
+          // Ensure `contenteditable` attribute is set
+          td.setAttribute("contenteditable", "true");
+
+          // Append necessary child elements
+          if (!td.querySelector(".kebab-menu")) {
+            const kebabMenu = document.createElement("div");
+            kebabMenu.classList.add("kebab-menu");
+            kebabMenu.textContent = "⋮";
+            td.appendChild(kebabMenu);
+          }
+
+          if (!td.querySelector(".resize-handle")) {
+            const resizeHandle = document.createElement("div");
+            resizeHandle.classList.add("resize-handle");
+            td.appendChild(resizeHandle);
+          }
+        });
+      });
+    }
+
+    // Insert modified HTML into the editor
+    const fragment = document.createDocumentFragment();
+    while (div.firstChild) {
+      fragment.appendChild(div.firstChild);
+    }
+
+    if (fragment.childNodes.length > 0) {
+      range.insertNode(fragment);
+
+      // Move the cursor to the end of the inserted content safely
+      const lastChild = fragment.lastChild;
+      if (lastChild) {
+        const newRange = document.createRange();
+        newRange.setStartAfter(lastChild);
+        newRange.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
+      } else {
+        console.error("No valid lastChild found after insertion.");
+      }
+    } else {
+      console.error("No valid nodes to insert.");
+    }
+  };
+
   // Handle paste event to detect and insert code blocks
   const handlePaste = async (event) => {
     event.preventDefault();
     const clipboardData = event.clipboardData || window.clipboardData;
+
+    // Check for HTML content first
+    const html = clipboardData.getData("text/html");
+    if (html) {
+      insertHTMLAtCursor(html);
+      return; // Stop further execution since we handled HTML
+    }
 
     // Check for images
     const files = Array.from(clipboardData.files);
@@ -1150,7 +1229,6 @@ const Toolbar = ({ editorRef }) => {
   return (
     <div className="toolbar justify-between flex flex-wrap gap-2 p-2 bg-gray-50 rounded-t-lg border border-gray-200">
       <div className="flex gap-2">
-        <AIAssistantButton />
         <Blocks
           insertList={insertList}
           insertCheckboxList={insertCheckboxList}
