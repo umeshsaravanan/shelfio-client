@@ -342,6 +342,10 @@ const Toolbar = ({ editorRef }) => {
     const list = document.createElement("ul");
     list.classList.add("checkbox-list");
 
+    // Style for UL to avoid unwanted hiding
+    list.style.listStyleType = "none"; // Remove default list bullets
+    list.style.paddingLeft = "10px"; // Add left padding to keep it in view
+
     const listItem = document.createElement("li");
     listItem.contentEditable = "true";
     listItem.classList.add("checkbox-item");
