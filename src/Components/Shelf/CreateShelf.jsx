@@ -36,6 +36,12 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
     onClose();
   };
 
+  const handleEnter = (e) =>{
+    if(e.key === 'Enter'){
+      handleCreateShelf();
+    }
+  }
+
   return (
     <>
       {!prefillShelf ? (
@@ -85,6 +91,7 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
                 onChange={(e) =>
                   setShelfData({ ...shelfData, name: e.target.value })
                 }
+                onKeyDown={handleEnter}
               />
             </div>
 
