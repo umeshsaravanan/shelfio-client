@@ -93,7 +93,7 @@ const BookCtx = ({ children }) => {
   const createShelf = async (payload) => {
     try {
       await axiosInstance.post(SHELVES_API_ENDPOINT, payload);
-      getShelves();
+      await getShelves();
     } catch (error) {
       handleError(error);
     }

@@ -6,9 +6,11 @@ import { MdOutlineInsertEmoticon } from "react-icons/md";
 import Popup from "../Popup/Popup";
 import { useBookCtx } from "../../Contexts/BookCtx";
 import { shelfICons } from "../Icons/ShelfIcons";
+import BtnLoader from "../Loader/BtnLoader";
 
 const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
   const [isOpen, setIsOpen] = useState(prefillShelf ? true : false);
+  const [isLoading, setIsLoading] = useState(false);
   const [shelfData, setShelfData] = useState(
     prefillShelf || {
       name: "",
@@ -18,8 +20,10 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
 
   const { createShelf, updateShelf } = useBookCtx();
 
-  const handleCreateShelf = () => {
-    createShelf({ ...shelfData });
+  const handleCreateShelf = async() => {
+    setIsLoading(true);
+    await createShelf({ ...shelfData });
+    setIsLoading(false);
 
     setIsOpen(false);
     setShelfData({ name: "", icon: ""});
@@ -35,6 +39,12 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
     setIsOpen(false);
     onClose();
   };
+
+  const handleEnter = (e) =>{
+    if(e.key === 'Enter'){
+      handleCreateShelf();
+    }
+  }
 
   return (
     <>
@@ -77,6 +87,7 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
                 Shelf Name
               </label>
               <input
+                autoFocus
                 id="name"
                 type="text"
                 placeholder="Enter a name for your shelf"
@@ -85,6 +96,7 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
                 onChange={(e) =>
                   setShelfData({ ...shelfData, name: e.target.value })
                 }
+                onKeyDown={handleEnter}
               />
             </div>
 
@@ -133,16 +145,28 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
             <button
               onClick={prefillShelf ? handleUpdateShelf : handleCreateShelf}
               disabled={!shelfData.name.trim()}
-              className={`px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg ${
+              className={`min-w-[150px] px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg ${
                 !shelfData.name.trim()
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-indigo-700"
               }`}
             >
-              {!prefillShelf ? (
-                <FaPlus className="w-4 h-4 inline-block mr-2" />
-              ) : null}
-              {prefillShelf ? "Update Shelf" : "  Create Shelf"}
+              {
+                isLoading ? (
+                  <BtnLoader />
+                ) : (
+                  <>
+                    {prefillShelf ? (
+                      <>
+                        <FaPlus className="w-4 h-4 inline-block mr-2" />
+                        Update Shelf
+                      </>
+                    ) : (
+                      "Create Shelf"
+                    )}
+                  </>
+                )
+              }              
             </button>
           </div>
         </>

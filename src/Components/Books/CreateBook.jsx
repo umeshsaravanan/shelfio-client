@@ -87,6 +87,12 @@ const CreateBook = ({
     onClose();
   };
 
+  const handleEnter = (e) => {
+    if (e.key === 'Enter') {
+      btnHandler();
+    }
+  }
+
   let btn;
 
   if (isTextBtn) {
@@ -147,6 +153,7 @@ const CreateBook = ({
                 className="w-full h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={bookData.title}
                 onChange={handleChange}
+                onKeyDown={handleEnter}
               />
             </div>
 
