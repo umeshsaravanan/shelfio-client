@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import Books from "../Books/Books";
 import { useNavigate, useParams } from "react-router-dom";
+import { useBookCtx } from "../../Contexts/BookCtx";
 
 const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { name, books } = shelf_data;
   const navigate = useNavigate();
   const { parentId, parentType } = useParams();
+  const { setSelectedShelf } = useBookCtx();
 
   const chevronOnclickHandler = (e) => {
     e.stopPropagation();
@@ -20,7 +22,7 @@ const Shelf = ({ shelf_data, selectedBook, setSelectedBook, onClick }) => {
     if (book) {
       link += `/book/${book.title}/${book.id}`;
     }
-
+    setSelectedShelf(shelf);
     navigate(link);
   };
 

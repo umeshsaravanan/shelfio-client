@@ -12,7 +12,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import UpComingFeatures from "./UpComingFeatures";
 
 const Sidebar = () => {
-  const { unShelvedBooks, shelves } = useBookCtx();
+  const { unShelvedBooks, shelves, setSelectedShelf } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
   const navigate = useNavigate();
   const { parentType, parentId, child1Id } = useParams();
@@ -33,6 +33,7 @@ const Sidebar = () => {
 
   const handleLogoClick = () => {
     setSelectedBook(null);
+    setSelectedShelf(null);
     navigate("/");
   };
 
