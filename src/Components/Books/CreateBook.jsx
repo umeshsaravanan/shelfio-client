@@ -22,7 +22,7 @@ const CreateBook = ({
     }
   );
   const [isLoading, setIsLoading] = useState(false);
-  const { createBook, shelves, updateBook } = useBookCtx();
+  const { createBook, shelves, updateBook, selectedShelf } = useBookCtx();
   const [error, setError] = useState("");
 
   const validateName = (name) => {
@@ -130,7 +130,7 @@ const CreateBook = ({
       </button>
     );
   }
-
+  debugger
   return (
     <div className="relative flex w-full">
       {!prefillData && btn}
@@ -188,8 +188,8 @@ const CreateBook = ({
                 options={getShelfDropdownOptions(shelves)}
                 handleChange={onDropdownChange}
                 value={{
-                  name: bookData?.shelf?.name,
-                  icon: getSelfIcons(bookData?.shelf?.icon),
+                  name: selectedShelf?.name,
+                  icon: getSelfIcons(selectedShelf?.icon),
                 }}
               />
             </div>

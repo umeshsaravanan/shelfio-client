@@ -12,7 +12,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import UpComingFeatures from "./UpComingFeatures";
 
 const Sidebar = () => {
-  const { unShelvedBooks, shelves } = useBookCtx();
+  const { unShelvedBooks, shelves, setSelectedShelf } = useBookCtx();
   const [selectedBook, setSelectedBook] = useState(undefined);
   const navigate = useNavigate();
   const { parentType, parentId, child1Id } = useParams();
@@ -33,11 +33,12 @@ const Sidebar = () => {
 
   const handleLogoClick = () => {
     setSelectedBook(null);
+    setSelectedShelf(null);
     navigate("/");
   };
 
   return (
-    <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg">
+    <div className="relative z-10 w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200 shadow-lg h-full overflow-hidden">
       <div className="p-6">
         {/* Logo */}
         <div
@@ -97,7 +98,7 @@ const Sidebar = () => {
         <CreateBook />
 
         {/* Books List */}
-        <div className="space-y-4 h-[calc(100%-190px)] overflow-auto pr-2">
+        <div className="space-y-4 h-[calc(100vh-230px)] overflow-auto pr-2">
           {/* Shelved Books */}
           <div className="mb-6">
             <div className="flex items-center justify-between px-2 mb-3">
