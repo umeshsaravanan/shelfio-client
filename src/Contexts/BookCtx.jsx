@@ -29,6 +29,7 @@ const BookCtx = ({ children }) => {
   const [showOverlayLoading, setShowOverlayLoading] = useState(false);
   const [pages, setPages] = useState();
   const [selectedPage, setSelectedPage] = useState();
+  const [selectedShelf, setSelectedShelf] = useState(null);
 
   const selectedNote = useRef();
   const { axiosInstance, handleError } = useAxios();
@@ -107,7 +108,7 @@ const BookCtx = ({ children }) => {
 
       if (isInitialCall && data && data.length && !parentType) {
         const firstShelf = data[0];
-
+        setSelectedShelf(firstShelf);
         navigate(`/shelf/${firstShelf.name}/${firstShelf.id}`);
       }
 
@@ -140,6 +141,7 @@ const BookCtx = ({ children }) => {
       getShelves();
       getBooksOfShelf(id);
       navigate("/");
+      setSelectedShelf(null);
     } catch (error) {
       handleError(error);
     } finally {
@@ -253,6 +255,7 @@ const BookCtx = ({ children }) => {
         pages,
         setPages,
         selectedPage,
+        selectedShelf,
         allNotes,
         unShelvedBooks,
         shelves,
@@ -265,6 +268,7 @@ const BookCtx = ({ children }) => {
         showOverlayLoading,
         setShowOverlayLoading,
         setSelectedPage,
+        setSelectedShelf
       }}
     >
       {children}
