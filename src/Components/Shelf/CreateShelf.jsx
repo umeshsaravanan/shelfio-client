@@ -8,28 +8,48 @@ import { useBookCtx } from "../../Contexts/BookCtx";
 import { shelfICons } from "../Icons/ShelfIcons";
 import BtnLoader from "../Loader/BtnLoader";
 
-const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
+const CreateShelf = ({ prefillShelf, onClose = () => {} }) => {
   const [isOpen, setIsOpen] = useState(prefillShelf ? true : false);
   const [isLoading, setIsLoading] = useState(false);
   const [shelfData, setShelfData] = useState(
     prefillShelf || {
       name: "",
-      icon: ""
+      icon: "",
     }
   );
+  const [error, setError] = useState("");
 
   const { createShelf, updateShelf } = useBookCtx();
 
-  const handleCreateShelf = async() => {
+  const validateName = (name) => {
+    if (!name.trim()) return "Shelf name is required.";
+    if (name.length < 3) return "Shelf name must be at least 3 characters.";
+    if (name.length > 50) return "Shelf name must be under 50 characters.";
+    return "";
+  };
+
+  const handleCreateShelf = async () => {
+    const validationError = validateName(shelfData.name);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsLoading(true);
     await createShelf({ ...shelfData });
     setIsLoading(false);
 
     setIsOpen(false);
-    setShelfData({ name: "", icon: ""});
+    setShelfData({ name: "", icon: "" });
   };
 
   const handleUpdateShelf = () => {
+    const validationError = validateName(shelfData.name);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     updateShelf({ ...shelfData });
     onClose();
     setIsOpen(false);
@@ -40,11 +60,11 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
     onClose();
   };
 
-  const handleEnter = (e) =>{
-    if(e.key === 'Enter'){
-      handleCreateShelf();
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+      prefillShelf ? handleUpdateShelf() : handleCreateShelf();
     }
-  }
+  };
 
   return (
     <>
@@ -93,11 +113,13 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
                 placeholder="Enter a name for your shelf"
                 className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 value={shelfData.name}
-                onChange={(e) =>
-                  setShelfData({ ...shelfData, name: e.target.value })
-                }
+                onChange={(e) => {
+                  setShelfData({ ...shelfData, name: e.target.value });
+                  setError(""); // Clear error when user types
+                }}
                 onKeyDown={handleEnter}
               />
+              {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
 
             {/* Choose Icon */}
@@ -151,22 +173,13 @@ const CreateShelf = ({ prefillShelf, onClose=() => { } }) => {
                   : "hover:bg-indigo-700"
               }`}
             >
-              {
-                isLoading ? (
-                  <BtnLoader />
-                ) : (
-                  <>
-                    {prefillShelf ? (
-                      <>
-                        <FaPlus className="w-4 h-4 inline-block mr-2" />
-                        Update Shelf
-                      </>
-                    ) : (
-                      "Create Shelf"
-                    )}
-                  </>
-                )
-              }              
+              {isLoading ? (
+                <BtnLoader />
+              ) : prefillShelf ? (
+                "Update Shelf"
+              ) : (
+                "Create Shelf"
+              )}
             </button>
           </div>
         </>

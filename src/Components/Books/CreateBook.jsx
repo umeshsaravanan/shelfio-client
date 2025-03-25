@@ -23,8 +23,17 @@ const CreateBook = ({
   );
   const [isLoading, setIsLoading] = useState(false);
   const { createBook, shelves, updateBook } = useBookCtx();
+  const [error, setError] = useState("");
+
+  const validateName = (name) => {
+    if (!name.trim()) return "Book name is required.";
+    if (name.length < 3) return "Book name must be at least 3 characters.";
+    if (name.length > 50) return "Book name must be under 50 characters.";
+    return "";
+  };
 
   const handleChange = (e) => {
+    setError("");
     setBookData({
       ...bookData,
       [e.target.name]: e.target.value,
@@ -43,7 +52,12 @@ const CreateBook = ({
   };
 
   const btnHandler = async () => {
-    if (!bookData.title.trim()) return;
+    const validationError = validateName(bookData.title);
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
     setIsLoading(true);
 
@@ -88,10 +102,10 @@ const CreateBook = ({
   };
 
   const handleEnter = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       btnHandler();
     }
-  }
+  };
 
   let btn;
 
@@ -155,6 +169,8 @@ const CreateBook = ({
                 onChange={handleChange}
                 onKeyDown={handleEnter}
               />
+
+              {error && <p className="text-red-500 text-xs">{error}</p>}
             </div>
 
             {/* Shelf Selection */}
